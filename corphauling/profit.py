@@ -148,6 +148,16 @@ def enrich(contract, isk_per_jump, route_voorkeur="kort", cfg=None, par=None):
         net = reward - cost
         per_jump = net / jumps if jumps else net
 
+    # Past de vracht in het actieve schip, en anders in een van de andere?
+    te_groot = bool(jf and par and par.get("hold") and volume > par["hold"])
+    past_in = []
+    if te_groot:
+        # Het kleinste schip dat het aankan eerst — dat is meestal ook het zuinigste.
+        past_in = sorted(
+            (s for s in (par.get("andere_schepen") or []) if s.get("hold", 0) >= volume),
+            key=lambda s: s["hold"],
+        )
+
     return {
         "id": contract.get("contract_id"),
         "title": contract.get("title") or "",
@@ -171,8 +181,9 @@ def enrich(contract, isk_per_jump, route_voorkeur="kort", cfg=None, par=None):
         "afstand_ly_fmt": f"{afstand_ly:.1f}".replace(".", ",") if afstand_ly is not None else "?",
         "isotopen": isotopen,
         "isotopen_fmt": f"{isotopen:,.0f}".replace(",", ".") if isotopen is not None else "?",
-        # Past de vracht in het schip van deze piloot?
-        "te_groot": bool(jf and par and par.get("hold") and volume > par["hold"]),
+        # Past de vracht in het schip van deze piloot? En zo niet: in welk wel?
+        "te_groot": te_groot,
+        "past_in": past_in,
         # Sprongen via de níet-gekozen route; alleen tonen als het verschilt.
         "jumps_anders": jumps_anders if jumps_anders != jumps else None,
         # Losse vlaggen zodat de template geen None-vergelijkingen hoeft te doen

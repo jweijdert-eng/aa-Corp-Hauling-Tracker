@@ -88,6 +88,16 @@
                                     </span>
                                 {% endif %}
                             </div>
+                            {% if row.te_groot %}
+                                <div class="cc-past">
+                                    {% if row.past_in %}
+                                        {% translate "past wel in je" %}
+                                        {% for s in row.past_in %}<span class="cc-past-schip">{{ s.label }}</span>{% if not forloop.last %} {% translate "of" %} {% endif %}{% endfor %}
+                                    {% else %}
+                                        {% translate "past in geen van je schepen" %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                             <div class="cc-stations">
                                 <span class="cc-pin">📍</span>{{ row.start.name }}
                                 <span class="cc-arrow-klein">→</span>{{ row.end.name }}

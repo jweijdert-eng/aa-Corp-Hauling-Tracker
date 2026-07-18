@@ -149,3 +149,10 @@
     margin-left: .25rem; padding: .1rem .45rem; border-radius: 999px; font-size: .78rem;
 }
 .cc-app .cc-knop-weg { color: var(--cc-red); border-color: rgba(224, 85, 85, .4); }
+
+/* "Past wel in je Rhea" — alternatief schip bij een te grote vracht */
+.cc-app .cc-past { font-size: .74rem; color: var(--cc-amber); margin-top: .2rem; }
+.cc-app .cc-past-schip {
+    font-weight: 700; padding: .05rem .35rem; border-radius: 999px;
+    background: rgba(240, 147, 43, .14); border: 1px solid rgba(240, 147, 43, .4);
+}
