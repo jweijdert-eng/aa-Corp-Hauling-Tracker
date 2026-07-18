@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
+from .forms import CorpFitForm
 from .models import Config, CorpFit, Piloot, Schip
 
 
@@ -226,9 +227,49 @@ class SchipAdmin(admin.ModelAdmin):
 class CorpFitAdmin(admin.ModelAdmin):
     """Standaardfits van de corp; leden kiezen die uit een lijst."""
 
-    list_display = ("naam", "schip", "volgorde")
+    form = CorpFitForm
+    list_display = ("naam", "schip", "modules", "vermenigvuldiger", "hold_max", "in_gebruik",
+                    "volgorde")
     list_filter = ("schip_type_id",)
     fields = ("naam", "schip_type_id", "fit", "volgorde")
+
+    def _fit(self, obj):
+        """(vermenigvuldiger, modules) van deze fit — nooit fataal."""
+        from .fit import cargo_multiplier, parse_eft
+
+        try:
+            return cargo_multiplier(parse_eft(obj.fit))
+        except Exception:  # noqa: BLE001 — een overzicht mag niet omvallen op ESI
+            return 1.0, []
+
+    @admin.display(description=_("Modules"))
+    def modules(self, obj):
+        _mult, mods = self._fit(obj)
+        return len(mods) or "⚠ geen"
+
+    @admin.display(description=_("Cargo"))
+    def vermenigvuldiger(self, obj):
+        mult, _mods = self._fit(obj)
+        return f"×{mult:.3f}"
+
+    @admin.display(description=_("Hold bij max skills"))
+    def hold_max(self, obj):
+        """Wat dit oplevert met Jump Freighters V en de rassen-skill V."""
+        from .esi import schip_stats
+
+        try:
+            basis = schip_stats(obj.schip_type_id).get("hold") or 0
+        except Exception:  # noqa: BLE001
+            return "—"
+        if not basis:
+            return "—"
+        mult, _mods = self._fit(obj)
+        hold = basis * 1.5 * 1.25 * mult          # JF V (+50%) en ras V (+25%)
+        return f"{hold:,.0f} m³".replace(",", ".")
+
+    @admin.display(description=_("In gebruik"))
+    def in_gebruik(self, obj):
+        return obj.schepen.count()
 
     @admin.display(description=_("Schip"), ordering="schip_type_id")
     def schip(self, obj):

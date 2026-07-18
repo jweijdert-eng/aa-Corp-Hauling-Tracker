@@ -55,8 +55,11 @@ De profielpagina laat de hele opbouw zien, zodat je 'm naast de game kunt leggen
 
 ### Corp-fits
 
-Een beheerder zet de fits klaar (admin → *Corp-fits*): een naam, het schip en het
-EFT-blok. Leden **kiezen daaruit** — er valt niets te plakken of in te vullen, dus
+Een beheerder zet de fits klaar (admin → *Corp-fits*). Plak het EFT-blok en klaar: het
+schip en de naam worden uit de kopregel (`[Rhea, ORE Expanded Cargohold]`) overgenomen.
+De lijst laat per fit zien hoeveel cargo-modules herkend zijn, wat de vermenigvuldiger
+wordt, hoeveel er bij maximale skills in past en hoeveel leden 'm gebruiken — zodat een
+verkeerd gespelde module meteen opvalt. Leden **kiezen daaruit** — er valt niets te plakken of in te vullen, dus
 iedereen rekent met dezelfde uitgangspunten. Het schip volgt uit de fit.
 
 Pas je een corp-fit aan, dan werkt dat meteen door bij iedereen die 'm gebruikt. Een fit
