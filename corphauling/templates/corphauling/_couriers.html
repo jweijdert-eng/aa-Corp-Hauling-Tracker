@@ -10,6 +10,20 @@
             {% if par.hold %}· {{ par.hold|floatformat:0 }} m³{% endif %}
             {% if par.skill_bron == "esi" %}· {% translate "skills uit EVE" %}{% endif %}
         </span>
+        {% if mijn_schepen|length > 1 %}
+            <form method="post" action="{% url 'corphauling:schip_wisselen' %}" class="cc-wissel">
+                {% csrf_token %}
+                <input type="hidden" name="terug" value="{{ request.get_full_path }}">
+                <label for="cc-schipkiezer">{% translate "rekenen met" %}</label>
+                <select name="schip_id" id="cc-schipkiezer" class="cc-select"
+                        onchange="this.form.submit()">
+                    {% for s in mijn_schepen %}
+                        <option value="{{ s.pk }}" {% if s.actief %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+                <noscript><button type="submit" class="cc-sort">{% translate "wissel" %}</button></noscript>
+            </form>
+        {% endif %}
         <a href="{% url 'corphauling:profiel' %}" class="cc-sort">{% translate "profiel aanpassen" %}</a>
     </div>
 {% endif %}

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
-from .models import Config, Piloot, Schip
+from .models import Config, CorpFit, Piloot, Schip
 
 
 @admin.register(Config)
@@ -204,6 +204,36 @@ class SchipAdmin(admin.ModelAdmin):
     @admin.display(description=_("Fit"), boolean=True)
     def heeft_fit(self, obj):
         return bool(obj.fit.strip())
+
+    def _can(self, request):
+        return request.user.is_superuser or request.user.has_perm(
+            "corphauling.manage_settings"
+        )
+
+    def has_view_permission(self, request, obj=None):
+        return self._can(request)
+
+    def has_add_permission(self, request):
+        return self._can(request)
+
+    def has_change_permission(self, request, obj=None):
+        return self._can(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return self._can(request)
+
+
+@admin.register(CorpFit)
+class CorpFitAdmin(admin.ModelAdmin):
+    """Standaardfits van de corp; leden kiezen die uit een lijst."""
+
+    list_display = ("naam", "schip", "volgorde")
+    list_filter = ("schip_type_id",)
+    fields = ("naam", "schip_type_id", "fit", "volgorde")
+
+    @admin.display(description=_("Schip"), ordering="schip_type_id")
+    def schip(self, obj):
+        return obj.get_schip_type_id_display()
 
     def _can(self, request):
         return request.user.is_superuser or request.user.has_perm(

@@ -18,7 +18,7 @@ from .esi import (
     resolve_names,
 )
 from .forms import PilootForm, SchipForm
-from .models import Config, Piloot, Schip
+from .models import Config, CorpFit, Piloot, Schip
 from .piloot import parameters
 from .profit import build
 
@@ -70,7 +70,9 @@ def index(request: WSGIRequest) -> HttpResponse:
 
     corp_name = cfg.corp_name or names.get(corp_id) or (f"#{corp_id}" if corp_id else "")
 
+    piloot = Piloot.objects.filter(user=request.user).first()
     return render(request, "corphauling/contracts.html", {
+        "mijn_schepen": piloot.schepen.all() if piloot else [],
         "rows": rows,
         "totals": totals,
         "sort": sort,
@@ -156,3 +158,15 @@ def profiel(request: WSGIRequest) -> HttpResponse:
         "par": parameters(request.user),
         "heeft_profiel": True,
     })
+
+
+@login_required
+@permission_required("corphauling.basic_access")
+def schip_wisselen(request: WSGIRequest) -> HttpResponse:
+    """Vanaf het bord snel een ander schip actief maken."""
+    if request.method == "POST":
+        piloot = Piloot.objects.filter(user=request.user).first()
+        schip = get_object_or_404(Schip, pk=request.POST.get("schip_id"), piloot=piloot)
+        schip.actief = True
+        schip.save()
+    return redirect(request.POST.get("terug") or "corphauling:index")

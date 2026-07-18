@@ -216,3 +216,33 @@ class Schip(models.Model):
         super().save(*args, **kwargs)
         if self.actief:      # maar één schip tegelijk actief
             Schip.objects.filter(piloot=self.piloot).exclude(pk=self.pk).update(actief=False)
+
+
+class CorpFit(models.Model):
+    """Een standaardfit die de corp klaarzet, zodat leden niets hoeven te plakken."""
+
+    naam = models.CharField(
+        max_length=80, verbose_name=_("Naam"),
+        help_text=_("Zoals leden 'm in de keuzelijst zien, bijv. \"Rhea — ORE\"."),
+    )
+    schip_type_id = models.IntegerField(
+        choices=Piloot.SCHEPEN, verbose_name=_("Schip"),
+        help_text=_("Voor welk schip deze fit bedoeld is."),
+    )
+    fit = models.TextField(
+        verbose_name=_("Fit"),
+        help_text=_("Het EFT-blok zoals je het uit EVE kopieert."),
+    )
+    volgorde = models.PositiveSmallIntegerField(
+        default=0, verbose_name=_("Volgorde"),
+        help_text=_("Lager staat hoger in de lijst."),
+    )
+
+    class Meta:
+        default_permissions = ()
+        verbose_name = _("corp-fit")
+        verbose_name_plural = _("corp-fits")
+        ordering = ("volgorde", "naam")
+
+    def __str__(self) -> str:
+        return self.naam

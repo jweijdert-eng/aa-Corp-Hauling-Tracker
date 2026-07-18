@@ -156,3 +156,12 @@
     font-weight: 700; padding: .05rem .35rem; border-radius: 999px;
     background: rgba(240, 147, 43, .14); border: 1px solid rgba(240, 147, 43, .4);
 }
+
+/* Snel wisselen van schip, direct op het bord */
+.cc-app .cc-wissel { display: inline-flex; align-items: center; gap: .35rem; margin: 0; }
+.cc-app .cc-wissel label { font-size: .74rem; color: var(--cc-dim); }
+.cc-app .cc-select {
+    background: var(--cc-surface-2); color: var(--cc-text);
+    border: 1px solid var(--cc-border); border-radius: 6px;
+    padding: .12rem .4rem; font-size: .78rem;
+}

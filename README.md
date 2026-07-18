@@ -55,12 +55,18 @@ die waarde gaat altijd voor.
 
 De profielpagina laat de hele opbouw zien, zodat je 'm naast de game kunt leggen.
 
+### Corp-fits
+
+Een beheerder kan standaardfits klaarzetten (admin → *Corp-fits*): een naam, het schip en
+het EFT-blok. Leden kiezen die dan uit een keuzelijst in plaats van zelf te plakken —
+dan rekent iedereen met dezelfde uitgangspunten en hoeft niemand iets over te typen.
+
 ### Persoonlijk profiel
 
 Elk lid beheert op `/corp-hauling/profiel/` **zijn eigen vloot**: voeg zoveel jump
 freighters toe als je wilt (Ark, Anshar, Nomad, Rhea), elk met een eigen naam en fit.
-Eén schip is actief — daarmee wordt op het contractenbord gerekend, en je wisselt met
-één klik. Past een contract niet in je actieve schip, dan zoekt het bord in je andere schepen:
+Eén schip is actief — daarmee wordt op het contractenbord gerekend. Wisselen kan direct
+op het bord met de keuzelijst *rekenen met*, zonder naar je profiel te gaan. Past een contract niet in je actieve schip, dan zoekt het bord in je andere schepen:
 *past wel in je grote Rhea* — of *past in geen van je schepen*, als het echt te groot is.
 Het kleinste schip dat het aankan wordt eerst genoemd. Skills worden standaard **uit EVE gelezen** — Jump Drive Calibration (+20%
 bereik per niveau) en Jump Fuel Conservation (−10% verbruik per niveau) — of je vult ze
