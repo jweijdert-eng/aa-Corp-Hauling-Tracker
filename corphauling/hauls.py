@@ -9,9 +9,20 @@ tegenhanger van het open-contractenbord: niet 'wat kan ik pakken' maar
 from datetime import datetime, timezone as dt_tz
 
 from .esi import character_contracts, location_info
-from .profit import fmt_isk
 
 FINISHED = ("finished", "finished_contractor", "finished_issuer")
+
+
+def fmt_isk(value):
+    """1234567890 → '1,23 mld'. Kort genoeg voor een tabelcel."""
+    try:
+        value = float(value or 0)
+    except (TypeError, ValueError):
+        return "0"
+    for grens, achtervoegsel in ((1e12, "bln"), (1e9, "mld"), (1e6, "mln"), (1e3, "k")):
+        if abs(value) >= grens:
+            return f"{value / grens:,.2f} {achtervoegsel}".replace(",", ".")
+    return f"{value:,.0f}".replace(",", ".")
 
 
 def _characters(user):

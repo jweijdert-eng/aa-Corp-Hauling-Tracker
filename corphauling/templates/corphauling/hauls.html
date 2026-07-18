@@ -2,10 +2,7 @@
 {% load i18n %}
 
 {% block details %}
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-        <h2 class="mb-0">{% translate "Mijn verdiensten" %}</h2>
-        <a href="{% url 'corphauling:index' %}" class="cc-sort">← {% translate "naar de open contracten" %}</a>
-    </div>
+    <h2 class="mb-3">🚚 {% translate "Mijn haul-verdiensten" %}</h2>
 
     {% if no_token %}
         <div class="alert alert-warning" style="max-width: 640px;">
