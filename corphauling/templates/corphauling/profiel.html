@@ -1,0 +1,60 @@
+{% extends 'corphauling/base.html' %}
+{% load i18n %}
+
+{% block details %}
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <h2 class="mb-0">{% translate "Mijn haul-profiel" %}</h2>
+        <a href="{% url 'corphauling:index' %}" class="btn btn-sm cc-sort">← {% translate "Terug naar de contracten" %}</a>
+    </div>
+
+    <p class="cc-dim">
+        {% blocktranslate %}Hiermee rekenen we jouw kosten uit: het schip bepaalt het isotopenverbruik, de brandstofsoort en hoeveel er in je hold past; je skills bepalen het sprongbereik en hoeveel brandstof je bespaart.{% endblocktranslate %}
+    </p>
+
+    {# Wat er nu gebruikt wordt #}
+    <div class="cc-stats mb-3">
+        <div class="cc-stat">
+            <span class="cc-stat-label">{% translate "Schip" %}</span>
+            <span class="cc-stat-value">{{ par.schip|default:"—" }}</span>
+        </div>
+        <div class="cc-stat">
+            <span class="cc-stat-label">{% translate "Sprongbereik" %}</span>
+            <span class="cc-stat-value cc-gold">{{ par.bereik_ly|floatformat:1 }} LY</span>
+        </div>
+        <div class="cc-stat">
+            <span class="cc-stat-label">{% translate "Isotopen per LY" %}</span>
+            <span class="cc-stat-value">{{ par.isotopen_per_ly|floatformat:0 }}</span>
+        </div>
+        <div class="cc-stat">
+            <span class="cc-stat-label">{% translate "Vrachtruimte" %}</span>
+            <span class="cc-stat-value">{% if par.hold %}{{ par.hold|floatformat:0 }} m³{% else %}—{% endif %}</span>
+        </div>
+        <div class="cc-stat">
+            <span class="cc-stat-label">{% translate "Isotoopprijs (Jita)" %}</span>
+            <span class="cc-stat-value">{{ par.isotoop_prijs|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    <div class="cc-dim small mb-3">
+        {% if par.skill_bron == "esi" %}
+            {% blocktranslate with c=par.skill_character j=par.jdc f=par.jfc %}Skills gelezen uit EVE ({{ c }}): Jump Drive Calibration {{ j }}, Jump Fuel Conservation {{ f }}.{% endblocktranslate %}
+        {% elif par.skill_bron == "profiel" %}
+            {% blocktranslate with j=par.jdc f=par.jfc %}Skills uit dit profiel: Jump Drive Calibration {{ j }}, Jump Fuel Conservation {{ f }}. (Geen token gevonden, of automatisch uitgezet.){% endblocktranslate %}
+        {% else %}
+            {% translate "Nog geen profiel — er wordt met de corp-instellingen gerekend." %}
+        {% endif %}
+    </div>
+
+    <form method="post" style="max-width: 520px;">
+        {% csrf_token %}
+        {% for veld in form %}
+            <div class="mb-3">
+                <label class="form-label" for="{{ veld.id_for_label }}">{{ veld.label }}</label>
+                {{ veld }}
+                {% if veld.help_text %}<div class="cc-dim small mt-1">{{ veld.help_text }}</div>{% endif %}
+                {% for fout in veld.errors %}<div class="cc-red small">{{ fout }}</div>{% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-sm cc-refresh">{% translate "Opslaan" %}</button>
+    </form>
+{% endblock %}

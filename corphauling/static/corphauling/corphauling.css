@@ -1,0 +1,80 @@
+/* Corp Hauling — EVE-dark thema (zelfde palet als de Corp KillBoard) */
+.cc-app {
+    --cc-surface: #0f0f22;
+    --cc-surface-2: #13132b;
+    --cc-border: #1c1c35;
+    --cc-text: #e1e4f0;
+    --cc-dim: #8a90b0;
+    --cc-blue: #00b4d8;
+    --cc-gold: #f0c040;
+    --cc-green: #3ecf6e;
+    --cc-red: #e05555;
+    --cc-amber: #f0932b;
+    color: var(--cc-text);
+}
+.cc-app .cc-dim { color: var(--cc-dim); font-weight: 400; }
+.cc-app .cc-gold { color: var(--cc-gold); }
+.cc-app .cc-green { color: var(--cc-green); }
+.cc-app .cc-red { color: var(--cc-red); }
+.cc-app a { color: var(--cc-blue); text-decoration: none; }
+
+/* Refresh-knop */
+.cc-app .cc-refresh {
+    color: var(--cc-amber); border: 1px solid rgba(240, 147, 43, .55);
+    background: rgba(240, 147, 43, .13); font-weight: 700;
+}
+.cc-app .cc-refresh:hover { background: rgba(240, 147, 43, .24); border-color: var(--cc-amber); color: #ffc078; }
+
+/* Samenvattingsblokken */
+.cc-app .cc-stats { display: flex; flex-wrap: wrap; gap: .6rem; }
+.cc-app .cc-stat {
+    display: flex; flex-direction: column; gap: .1rem;
+    flex: 1 1 140px; min-width: 130px;
+    padding: .55rem .75rem; border-radius: 8px;
+    background: var(--cc-surface); border: 1px solid var(--cc-border);
+}
+.cc-app .cc-stat-label {
+    font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--cc-dim);
+}
+.cc-app .cc-stat-value { font-size: 1.15rem; font-weight: 700; }
+
+/* Sorteerknoppen */
+.cc-app .cc-sorts { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.cc-app .cc-sort {
+    padding: .18rem .6rem; border-radius: 999px; font-size: .8rem;
+    color: var(--cc-dim); background: rgba(255, 255, 255, .03);
+    border: 1px solid var(--cc-border);
+}
+.cc-app .cc-sort:hover { background: var(--cc-surface-2); color: var(--cc-text); }
+.cc-app .cc-sort.is-active {
+    color: #04121a; background: var(--cc-blue); border-color: var(--cc-blue); font-weight: 700;
+}
+
+/* Tabel */
+.cc-app .cc-table { color: var(--cc-text); border-color: var(--cc-border); }
+.cc-app .cc-table > thead th {
+    font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--cc-dim); background: var(--cc-surface); border-color: var(--cc-border);
+    white-space: nowrap;
+}
+.cc-app .cc-table > tbody > tr { background: var(--cc-surface); }
+.cc-app .cc-table > tbody > tr:hover { background: var(--cc-surface-2); }
+.cc-app .cc-table > tbody > tr > td { border-color: var(--cc-border); }
+.cc-app .cc-table .cc-net { font-weight: 700; font-size: 1.02rem; }
+
+/* Contract dat onder de streep uitkomt */
+.cc-app .cc-table > tbody > tr.cc-loss { background: rgba(224, 85, 85, .07); }
+
+/* Route-regel */
+.cc-app .cc-route { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; font-weight: 600; }
+.cc-app .cc-arrow { color: var(--cc-dim); }
+.cc-app .cc-sys { white-space: nowrap; }
+
+/* Waarschuwingsbadges bij de route */
+.cc-app .cc-badge {
+    font-size: .66rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    padding: .08rem .4rem; border-radius: 999px; white-space: nowrap;
+}
+.cc-app .cc-badge-red { color: var(--cc-red); background: rgba(224, 85, 85, .15); border: 1px solid rgba(224, 85, 85, .5); }
+.cc-app .cc-badge-amber { color: var(--cc-amber); background: rgba(240, 147, 43, .15); border: 1px solid rgba(240, 147, 43, .5); }

@@ -1,0 +1,18 @@
+{% extends 'allianceauth/base-bs5.html' %}
+
+{% load i18n %}
+{% load static %}
+
+{% block page_title %}{% translate "Corp Hauling" %}{% endblock %}
+
+{% block header_nav_brand %}{% translate "Corp Hauling" %}{% endblock header_nav_brand %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'corphauling/corphauling.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <div class="cc-app">
+        {% block details %}{% endblock %}
+    </div>
+{% endblock %}
