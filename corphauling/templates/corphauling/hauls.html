@@ -1,0 +1,134 @@
+{% extends 'corphauling/base.html' %}
+{% load i18n %}
+
+{% block details %}
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <h2 class="mb-0">{% translate "Mijn verdiensten" %}</h2>
+        <a href="{% url 'corphauling:index' %}" class="cc-sort">← {% translate "naar de open contracten" %}</a>
+    </div>
+
+    {% if no_token %}
+        <div class="alert alert-warning" style="max-width: 640px;">
+            <p class="mb-2">
+                {% translate "Om je afgeleverde ritten te kunnen tonen hebben we toegang tot je persoonlijke contracten nodig." %}
+            </p>
+            <p class="mb-3 small">
+                {% translate "Koppel je character één keer; daarna verschijnen je verdiensten vanzelf." %}
+            </p>
+            <a href="{% url 'corphauling:koppel_contracts' %}" class="btn btn-sm btn-warning">
+                {% translate "Character koppelen" %}
+            </a>
+        </div>
+    {% else %}
+        {# Samenvatting #}
+        <div class="cc-stats mb-3">
+            <div class="cc-stat">
+                <span class="cc-stat-label">{% translate "Totaal verdiend" %}</span>
+                <span class="cc-stat-value cc-green">{{ stats.totaal_fmt }}</span>
+                <span class="cc-dim small">{{ stats.aantal_klaar }} {% translate "ritten voltooid" %}</span>
+            </div>
+            <div class="cc-stat">
+                <span class="cc-stat-label">{% translate "Gemiddeld per dag" %}</span>
+                <span class="cc-stat-value cc-gold">{{ stats.gem_per_dag_fmt }}</span>
+                <span class="cc-dim small">{% translate "over" %} {{ stats.actieve_dagen }} {% translate "actieve dagen" %}</span>
+            </div>
+            <div class="cc-stat">
+                <span class="cc-stat-label">{% translate "Volume gehauld" %}</span>
+                <span class="cc-stat-value">{{ stats.volume_fmt }} m³</span>
+                <span class="cc-dim small">{{ stats.per_m3_fmt }}/m³</span>
+            </div>
+            <div class="cc-stat">
+                <span class="cc-stat-label">{% translate "Onderweg" %}</span>
+                <span class="cc-stat-value">{{ stats.aantal_bezig }}</span>
+                {% if stats.aantal_gefaald %}
+                    <span class="cc-dim small cc-red">{{ stats.aantal_gefaald }} {% translate "gefaald" %} · −{{ stats.verlies_fmt }}</span>
+                {% else %}
+                    <span class="cc-dim small">{% translate "lopende ritten" %}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Verdiensten per dag — CSS-staafgrafiek, geen JS nodig #}
+        {% if stats.grafiek %}
+        <div class="cc-chart-card mb-3">
+            <div class="cc-chart-title">{% translate "Verdiensten per dag" %}</div>
+            <div class="cc-chart">
+                {% for b in stats.grafiek %}
+                    <div class="cc-bar-col" title="{{ b.dag }} · {{ b.beloning_fmt }}">
+                        <div class="cc-bar-val">{{ b.beloning_fmt }}</div>
+                        <div class="cc-bar" style="height: {{ b.pct }}%;"></div>
+                        <div class="cc-bar-day">{{ b.dag_kort }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if hauls %}
+            <div class="table-responsive">
+                <table class="table cc-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Route" %}</th>
+                            <th>{% translate "Piloot" %}</th>
+                            <th class="text-end">{% translate "Beloning" %}</th>
+                            <th class="text-end">{% translate "Volume" %}</th>
+                            <th>{% translate "Status" %}</th>
+                            <th>{% translate "Voltooid" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in hauls %}
+                            <tr class="{% if h.is_gefaald %}cc-loss{% endif %}">
+                                <td>
+                                    <div class="cc-route">
+                                        <span class="cc-sys">{{ h.start }}</span>
+                                        <span class="cc-arrow">→</span>
+                                        <span class="cc-sys">{{ h.eind }}</span>
+                                    </div>
+                                    {% if h.titel %}<div class="cc-dim small">{{ h.titel }}</div>{% endif %}
+                                </td>
+                                <td class="cc-dim small">{{ h.piloot }}</td>
+                                <td class="text-end cc-gold">{{ h.beloning_fmt }}</td>
+                                <td class="text-end">
+                                    {{ h.volume_fmt }} m³
+                                    <div class="cc-dim small">{{ h.per_m3_fmt }}/m³</div>
+                                </td>
+                                <td>
+                                    {% if h.is_klaar %}<span class="cc-badge cc-badge-ok">{% translate "klaar" %}</span>
+                                    {% elif h.is_bezig %}<span class="cc-badge cc-badge-amber">{% translate "onderweg" %}</span>
+                                    {% elif h.is_gefaald %}<span class="cc-badge cc-badge-red">{% translate "gefaald" %}</span>
+                                    {% else %}<span class="cc-dim small">{{ h.status }}</span>{% endif %}
+                                </td>
+                                <td class="cc-dim small">
+                                    {% if h.date_completed %}{{ h.date_completed|date:"j M H:i" }}{% else %}—{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                {% translate "Nog geen afgeleverde koeriers-ritten gevonden op je characters." %}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <style>
+        .cc-app .cc-chart-card { padding: .8rem 1rem; border-radius: 10px;
+            background: var(--cc-surface); border: 1px solid var(--cc-border); }
+        .cc-app .cc-chart-title { font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+            text-transform: uppercase; color: var(--cc-dim); margin-bottom: .8rem; }
+        .cc-app .cc-chart { display: flex; align-items: flex-end; gap: .3rem;
+            height: 170px; overflow-x: auto; padding-top: 1.1rem; }
+        .cc-app .cc-bar-col { flex: 1 1 26px; min-width: 26px; display: flex;
+            flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+        .cc-app .cc-bar { width: 70%; min-height: 2px; border-radius: 4px 4px 0 0;
+            background: linear-gradient(180deg, #3ecf6e, #2a9d54); }
+        .cc-app .cc-bar-col:hover .cc-bar { background: linear-gradient(180deg, #5fe089, #3ecf6e); }
+        .cc-app .cc-bar-val { font-size: .58rem; color: var(--cc-dim); margin-bottom: .2rem; white-space: nowrap; }
+        .cc-app .cc-bar-day { font-size: .58rem; color: var(--cc-dim); margin-top: .3rem; white-space: nowrap; }
+        .cc-app .cc-badge-ok { color: var(--cc-green); background: rgba(62,207,110,.14); border: 1px solid rgba(62,207,110,.4); }
+    </style>
+{% endblock %}

@@ -380,6 +380,51 @@ def isotoop_prijs(type_id):
 
 
 SKILLS_SCOPE = "esi-skills.read_skills.v1"
+CHAR_CONTRACTS_SCOPE = "esi-contracts.read_character_contracts.v1"
+
+
+def _char_contracts_token(character_id):
+    """Een geldig token van dít character met de character-contracten-scope."""
+    from esi.models import Token
+
+    for token in Token.objects.filter(character_id=character_id,
+                                      scopes__name=CHAR_CONTRACTS_SCOPE).order_by("-created"):
+        try:
+            return token.valid_access_token()
+        except Exception:  # noqa: BLE001 — verlopen/ingetrokken token
+            continue
+    return None
+
+
+def character_contracts(character_id):
+    """De persoonlijke contracten van één character (SWR-gecached).
+
+    Bevat de contracten die het character heeft uitgeschreven én aangenomen —
+    genoeg om te zien welke koeriers-ritten deze piloot heeft afgeleverd.
+    Geeft [] als er geen bruikbaar token met de scope is.
+    """
+    def _produce():
+        token = _char_contracts_token(character_id)
+        if not token:
+            return []
+        return _paged(f"/characters/{character_id}/contracts/", token=token)
+
+    if not _char_contracts_token(character_id):
+        return []
+    return _swr(f"cc_charcontracts_{character_id}", 900, _produce)
+
+
+def has_char_contracts_token(character_ids):
+    """Of minstens één van deze characters een character-contracten-token heeft."""
+    from esi.models import Token
+
+    try:
+        return Token.objects.filter(character_id__in=list(character_ids),
+                                    scopes__name=CHAR_CONTRACTS_SCOPE).exists()
+    except Exception:  # noqa: BLE001
+        return False
+
+
 SKILL_JDC = 21611   # Jump Drive Calibration — +20% bereik per niveau
 SKILL_JFC = 21610   # Jump Fuel Conservation — -10% verbruik per niveau
 

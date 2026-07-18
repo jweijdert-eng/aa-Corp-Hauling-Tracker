@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from esi.decorators import token_required
 
 from .esi import (
+    CHAR_CONTRACTS_SCOPE,
     CONTRACTS_SCOPE,
     SKILLS_SCOPE,
     STRUCTURES_SCOPE,
@@ -19,6 +20,7 @@ from .esi import (
     resolve_names,
 )
 from .models import Config, CorpFit, Piloot, Schip
+from .hauls import haul_stats, user_hauls
 from .piloot import parameters, schepen_overzicht
 from .profit import build
 
@@ -145,3 +147,41 @@ def koppel_skills(request: WSGIRequest, token) -> HttpResponse:
         % {"naam": token.character_name},
     )
     return redirect("corphauling:profiel")
+
+
+@login_required
+@permission_required("corphauling.basic_access")
+def mijn_hauls(request: WSGIRequest) -> HttpResponse:
+    """Wat de ingelogde piloot verdiende met afgeleverde koeriers-ritten."""
+    from .esi import has_char_contracts_token
+
+    chars = []
+    try:
+        from allianceauth.eveonline.models import EveCharacter
+        chars = list(EveCharacter.objects.filter(character_ownership__user=request.user)
+                     .values_list("character_id", flat=True))
+    except Exception:  # noqa: BLE001
+        pass
+
+    if not has_char_contracts_token(chars):
+        return render(request, "corphauling/hauls.html", {"no_token": True})
+
+    hauls, _met = user_hauls(request.user)
+    return render(request, "corphauling/hauls.html", {
+        "hauls": hauls,
+        "stats": haul_stats(hauls),
+    })
+
+
+@login_required
+@permission_required("corphauling.basic_access")
+@token_required(scopes=[CHAR_CONTRACTS_SCOPE])
+def koppel_contracts(request: WSGIRequest, token) -> HttpResponse:
+    """Je character koppelen zodat we je afgeleverde ritten kunnen lezen."""
+    cache.delete(f"cc_charcontracts_{token.character_id}")
+    messages.success(
+        request,
+        _("%(naam)s is gekoppeld — je haul-verdiensten worden nu getoond.")
+        % {"naam": token.character_name},
+    )
+    return redirect("corphauling:mijn_hauls")

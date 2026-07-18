@@ -22,7 +22,10 @@
                 {% endif %}
                 {{ corp_name }} <span class="cc-dim">{% translate "Contracten" %}</span>
             </h2>
-            <a href="?sort={{ sort }}&refresh=1" class="btn btn-sm cc-refresh" title="{% translate 'Verse data ophalen' %}">↻</a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{% url 'corphauling:mijn_hauls' %}" class="cc-sort">📈 {% translate "Mijn verdiensten" %}</a>
+                <a href="?sort={{ sort }}&refresh=1" class="btn btn-sm cc-refresh" title="{% translate 'Verse data ophalen' %}">↻</a>
+            </div>
         </div>
 
         {% include "corphauling/_couriers.html" %}
