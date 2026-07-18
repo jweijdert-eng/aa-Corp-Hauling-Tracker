@@ -14,7 +14,7 @@ class CorpHaulingMenuItem(MenuItemHook):
     def __init__(self):
         MenuItemHook.__init__(
             self,
-            _("Corp Hauling"),
+            _("Corp Hauling Tracker"),
             "fas fa-truck fa-fw",
             "corphauling:index",
             navactive=["corphauling:"],

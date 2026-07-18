@@ -1,4 +1,4 @@
-# AA Corp Hauling
+# AA Corp Hauling Tracker
 
 Alliance Auth-plugin die per piloot toont **wat hij verdiende met koeriers-ritten**.
 

@@ -8,4 +8,4 @@ from corphauling import __version__
 class CorpHaulingConfig(AppConfig):
     name = "corphauling"
     label = "corphauling"
-    verbose_name = f"Corp Hauling v{__version__}"
+    verbose_name = f"Corp Hauling Tracker v{__version__}"

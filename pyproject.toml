@@ -5,8 +5,8 @@ requires = [
 ]
 
 [project]
-name = "aa-corp-hauling"
-description = "Corp Hauling plugin voor Alliance Auth — open koeriers-contracten van een corporatie, met netto-winstberekening."
+name = "aa-corp-hauling-tracker"
+description = "Corp Hauling Tracker voor Alliance Auth — toont per piloot wat hij verdiende met koeriers-ritten."
 readme = "README.md"
 keywords = [
     "allianceauth",
