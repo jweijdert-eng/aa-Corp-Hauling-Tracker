@@ -46,6 +46,14 @@ in je hold passen krijgen de melding *past niet*.
 
 Zonder profiel valt alles terug op de corp-instellingen.
 
+### Meekijken als beheerder
+
+In het admin-paneel staan alle profielen bij elkaar: wie welk schip vliegt, welke skills
+er gebruikt worden en waar die vandaan komen, plus het doorgerekende sprongbereik,
+verbruik en vrachtruimte. De kolom *Signaal* laat zien waar iets niet klopt — bijvoorbeeld
+`⚠ geen skill-token` als iemand "skills uit EVE" aan heeft staan maar er geen bruikbaar
+token is, zodat er ongemerkt met de ingevulde waarden gerekend wordt.
+
 ### Route-waarschuwingen
 
 | Badge | Betekenis |
