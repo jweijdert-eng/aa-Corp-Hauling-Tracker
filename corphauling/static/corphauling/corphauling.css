@@ -117,3 +117,22 @@
     color: var(--cc-blue); background: rgba(0, 180, 216, .12);
     border: 1px solid rgba(0, 180, 216, .35);
 }
+
+/* Opbouw van de berekening op de profielpagina */
+.cc-app .cc-opbouw {
+    max-width: 620px; padding: .6rem .85rem; border-radius: 8px;
+    background: var(--cc-surface); border: 1px solid var(--cc-border);
+}
+.cc-app .cc-opbouw-titel {
+    font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--cc-dim); margin-bottom: .35rem;
+}
+.cc-app .cc-opbouw-regel {
+    display: flex; justify-content: space-between; gap: 1rem;
+    font-size: .82rem; padding: .12rem 0;
+}
+.cc-app .cc-opbouw-regel > span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cc-app .cc-opbouw-totaal {
+    margin-top: .3rem; padding-top: .35rem; border-top: 1px solid var(--cc-border);
+    font-weight: 700; color: var(--cc-gold);
+}

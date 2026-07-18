@@ -36,6 +36,25 @@ De afstand is hemelsbreed tussen begin- en eindsysteem. Verbruik, brandstofsoort
 sprongbereik en vrachtruimte komen uit EVE zelf (dogma-attributen van het schip), de
 isotoopprijs uit Jita.
 
+### Vrachtruimte en brandstof
+
+Beide volgen je skills:
+
+```
+vrachtruimte = kale romp × (1 + 0,10 × Jump Freighters) × (1 + 0,05 × rassen-freighterskill)
+brandstof    = basis × (1 − 0,10 × Jump Fuel Conservation) × (1 − 0,10 × Jump Freighters)
+```
+
+Een Rhea met maximale skills komt daarmee op 270.000 m³ en 2.500 isotopen per lichtjaar,
+tegen 144.000 m³ en 10.000 isotopen voor de kale romp zonder skills.
+
+Je kunt daarnaast je **fit plakken** (het EFT-blok uit de game). Modules die de cargo
+vergroten worden meegerekend met EVE's stacking-penalty — drie Expanded Cargohold II's
+leveren ×1,83 op, niet ×2,07. Weet je je werkelijke vrachtruimte, vul die dan gewoon in;
+die waarde gaat altijd voor.
+
+De profielpagina laat de hele opbouw zien, zodat je 'm naast de game kunt leggen.
+
 ### Persoonlijk profiel
 
 Elk lid kan op `/corp-hauling/profiel/` zijn eigen schip kiezen (Ark, Anshar, Nomad,

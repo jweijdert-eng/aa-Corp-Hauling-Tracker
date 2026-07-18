@@ -153,6 +153,26 @@ class Piloot(models.Model):
         default=5, verbose_name=_("Jump Fuel Conservation"),
         help_text=_("−10% isotopenverbruik per niveau."),
     )
+    jf_skill = models.PositiveSmallIntegerField(
+        default=5, verbose_name=_("Jump Freighters"),
+        help_text=_("+10% vrachtruimte en −10% brandstof per niveau."),
+    )
+    rassen_skill = models.PositiveSmallIntegerField(
+        default=5, verbose_name=_("Freighter-skill van het ras"),
+        help_text=_("Caldari/Gallente/Minmatar/Amarr Freighter: +5% vrachtruimte per niveau."),
+    )
+    fit = models.TextField(
+        blank=True, default="", verbose_name=_("Fit (plakken uit EVE)"),
+        help_text=_("Plak hier je fit zoals je die in EVE kopieert. Modules die de "
+                    "vrachtruimte vergroten worden meegerekend, mét stacking-penalty. "
+                    "Laat leeg voor een kale romp."),
+    )
+    hold_handmatig = models.FloatField(
+        default=0, verbose_name=_("Vrachtruimte zelf invullen (m³)"),
+        help_text=_("Staat dit op 0, dan rekenen we de vrachtruimte uit op basis van "
+                    "je schip, skills en fit. Vul het getal uit de game in als je zeker "
+                    "wilt weten dat het klopt — dan gaat deze waarde voor."),
+    )
 
     class Meta:
         default_permissions = ()

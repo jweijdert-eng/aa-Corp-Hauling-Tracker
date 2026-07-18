@@ -35,6 +35,49 @@
         </div>
     </div>
 
+    {# Hoe de vrachtruimte is opgebouwd — zodat je het kunt naslaan in de game #}
+    <div class="cc-opbouw mb-3">
+        <div class="cc-opbouw-titel">{% translate "Zo komen we aan de vrachtruimte" %}</div>
+        <div class="cc-opbouw-regel">
+            <span>{% translate "kale romp" %}</span>
+            <span>{{ par.hold_basis|floatformat:0 }} m³</span>
+        </div>
+        <div class="cc-opbouw-regel">
+            <span>+ {% translate "Jump Freighters" %} {{ par.jf_skill }} (+10%/{% translate "niveau" %})
+                  · {% translate "rassen-skill" %} {{ par.rassen_skill }} (+5%/{% translate "niveau" %})</span>
+            <span>{{ par.hold_skills|floatformat:0 }} m³</span>
+        </div>
+        {% if par.fit_modules %}
+            {% for m in par.fit_modules %}
+                <div class="cc-opbouw-regel cc-dim">
+                    <span>+ {{ m.naam }} (×{{ m.bonus|floatformat:3 }}, {% translate "na stacking" %} ×{{ m.effectief|floatformat:3 }})</span>
+                    <span></span>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="cc-opbouw-regel cc-opbouw-totaal">
+            <span>
+                {% if par.hold_bron == "handmatig" %}{% translate "zelf ingevuld" %}
+                {% elif par.hold_bron == "fit" %}{% translate "met jouw fit" %}
+                {% else %}{% translate "berekend" %}{% endif %}
+            </span>
+            <span>{{ par.hold|floatformat:0 }} m³</span>
+        </div>
+    </div>
+
+    <div class="cc-opbouw mb-3">
+        <div class="cc-opbouw-titel">{% translate "En aan het brandstofverbruik" %}</div>
+        <div class="cc-opbouw-regel">
+            <span>{% translate "schip, zonder skills" %}</span>
+            <span>{{ par.isotopen_basis_kaal|floatformat:0 }} {% translate "isotopen/LY" %}</span>
+        </div>
+        <div class="cc-opbouw-regel cc-opbouw-totaal">
+            <span>− {% translate "Jump Fuel Conservation" %} {{ par.jfc }} · {% translate "Jump Freighters" %} {{ par.jf_skill }}
+                  ({% translate "elk −10%/niveau" %})</span>
+            <span>{{ par.isotopen_per_ly|floatformat:0 }} {% translate "isotopen/LY" %}</span>
+        </div>
+    </div>
+
     <div class="cc-dim small mb-3">
         {% if par.skill_bron == "esi" %}
             {% blocktranslate with c=par.skill_character j=par.jdc f=par.jfc %}Skills gelezen uit EVE ({{ c }}): Jump Drive Calibration {{ j }}, Jump Fuel Conservation {{ f }}.{% endblocktranslate %}

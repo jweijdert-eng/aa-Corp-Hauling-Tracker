@@ -348,10 +348,21 @@ SKILLS_SCOPE = "esi-skills.read_skills.v1"
 SKILL_JDC = 21611   # Jump Drive Calibration — +20% bereik per niveau
 SKILL_JFC = 21610   # Jump Fuel Conservation — -10% verbruik per niveau
 
+SKILL_JF = 29029    # Jump Freighters — trait 1311/1312 op de romp (+10% cargo, -10% brandstof p/n)
+
+# Rassen-freighterskill per jump freighter (+5% cargo per niveau)
+RASSEN_SKILL = {
+    28844: 20526,   # Rhea   → Caldari Freighter
+    28846: 20528,   # Nomad  → Minmatar Freighter
+    28848: 20527,   # Anshar → Gallente Freighter
+    28850: 20524,   # Ark    → Amarr Freighter
+}
+
 # Dogma-attributen van een schip met jump drive
 ATTR_BEREIK = 867          # jumpDriveRange (LY)
 ATTR_VERBRUIK = 868        # isotopen per lichtjaar
 ATTR_BRANDSTOF = 866       # type-id van de isotoop
+ATTR_CARGO_MULT = 149      # cargoCapacityMultiplier van een module (1,275 = +27,5%)
 
 
 def schip_stats(type_id):
@@ -372,6 +383,57 @@ def schip_stats(type_id):
     }
     cache.set(key, stats, TTL_SYSTEM if data else 600)
     return stats
+
+
+def module_cargo_multiplier(type_id):
+    """Cargo-vermenigvuldiger van een module (1,0 als die geen cargo-bonus geeft)."""
+    key = f"cc_cargomult_{type_id}"
+    cached = cache.get(key)
+    if cached is not None:
+        return cached
+
+    data = _get(f"/universe/types/{type_id}/") or {}
+    attrs = {a["attribute_id"]: a["value"] for a in data.get("dogma_attributes", [])}
+    mult = float(attrs.get(ATTR_CARGO_MULT) or 1.0)
+    cache.set(key, mult, TTL_SYSTEM if data else 600)
+    return mult
+
+
+def resolve_type_ids(namen):
+    """{naam_kleine_letters: type_id} voor itemnamen (via /universe/ids)."""
+    namen = [n for n in {str(n).strip() for n in namen} if n]
+    if not namen:
+        return {}
+
+    uit, missend = {}, []
+    for naam in namen:
+        cached = cache.get(f"cc_typeid_{naam.lower()}")
+        if cached is not None:
+            if cached:
+                uit[naam.lower()] = cached
+        else:
+            missend.append(naam)
+
+    for chunk in (missend[i:i + 100] for i in range(0, len(missend), 100)):
+        try:
+            r = _session.post(
+                f"{ESI}/universe/ids/",
+                headers=UA, params={"datasource": "tranquility"},
+                json=list(chunk), timeout=15,
+            )
+            data = r.json() if r.status_code == 200 else {}
+        except (requests.RequestException, ValueError) as exc:
+            logger.warning("Type-ids opzoeken mislukt: %s", exc)
+            data = {}
+        gevonden = {t["name"].lower(): t["id"] for t in (data.get("inventory_types") or [])}
+        for naam in chunk:
+            tid = gevonden.get(naam.lower())
+            if tid:
+                uit[naam.lower()] = tid
+            # Onbekende namen ook cachen (als 0), anders vragen we ze elke keer opnieuw.
+            cache.set(f"cc_typeid_{naam.lower()}", tid or 0, TTL_SYSTEM if tid else 3600)
+
+    return uit
 
 
 def character_skills(character_id):
