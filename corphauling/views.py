@@ -12,12 +12,13 @@ from esi.decorators import token_required
 
 from .esi import (
     CONTRACTS_SCOPE,
+    SKILLS_SCOPE,
     STRUCTURES_SCOPE,
     has_contracts_token,
     open_couriers,
     resolve_names,
 )
-from .forms import PilootForm, SchipForm
+from .forms import SchipForm
 from .models import Config, CorpFit, Piloot, Schip
 from .piloot import parameters
 from .profit import build
@@ -107,13 +108,7 @@ def profiel(request: WSGIRequest) -> HttpResponse:
     piloot, _nieuw = Piloot.objects.get_or_create(user=request.user)
     actie = request.POST.get("actie", "")
 
-    if request.method == "POST" and actie == "skills":
-        form = PilootForm(request.POST, instance=piloot)
-        if form.is_valid():
-            form.save()
-            messages.success(request, _("Je skills zijn opgeslagen."))
-            return redirect("corphauling:profiel")
-    elif request.method == "POST" and actie in ("schip-nieuw", "schip-bewerk"):
+    if request.method == "POST" and actie in ("schip-nieuw", "schip-bewerk"):
         schip = None
         if actie == "schip-bewerk":
             schip = get_object_or_404(Schip, pk=request.POST.get("schip_id"), piloot=piloot)
@@ -127,7 +122,6 @@ def profiel(request: WSGIRequest) -> HttpResponse:
             nieuw_schip.save()
             messages.success(request, _("Schip opgeslagen."))
             return redirect("corphauling:profiel")
-        form = PilootForm(instance=piloot)
     elif request.method == "POST" and actie == "schip-actief":
         schip = get_object_or_404(Schip, pk=request.POST.get("schip_id"), piloot=piloot)
         schip.actief = True
@@ -144,14 +138,11 @@ def profiel(request: WSGIRequest) -> HttpResponse:
             rest.save()
         messages.success(request, _("Schip verwijderd."))
         return redirect("corphauling:profiel")
-    else:
-        form = PilootForm(instance=piloot)
 
     bewerk_id = request.GET.get("bewerk")
     bewerken = Schip.objects.filter(pk=bewerk_id, piloot=piloot).first() if bewerk_id else None
 
     return render(request, "corphauling/profiel.html", {
-        "form": form,
         "schip_form": SchipForm(instance=bewerken),
         "bewerken": bewerken,
         "schepen": piloot.schepen.all(),
@@ -170,3 +161,17 @@ def schip_wisselen(request: WSGIRequest) -> HttpResponse:
         schip.actief = True
         schip.save()
     return redirect(request.POST.get("terug") or "corphauling:index")
+
+
+@login_required
+@permission_required("corphauling.basic_access")
+@token_required(scopes=[SKILLS_SCOPE])
+def koppel_skills(request: WSGIRequest, token) -> HttpResponse:
+    """Je character koppelen zodat we je skills kunnen lezen."""
+    cache.delete(f"cc_skills_{token.character_id}")
+    messages.success(
+        request,
+        _("%(naam)s is gekoppeld — je skills worden nu gelezen.")
+        % {"naam": token.character_name},
+    )
+    return redirect("corphauling:profiel")

@@ -63,6 +63,12 @@ dan rekent iedereen met dezelfde uitgangspunten en hoeft niemand iets over te ty
 
 ### Persoonlijk profiel
 
+Skills worden **altijd rechtstreeks uit EVE gelezen** — Jump Drive Calibration, Jump Fuel
+Conservation, Jump Freighters en de rassen-freighterskill. Er valt niets in te vullen, dus
+niemand rekent per ongeluk met verouderde of te optimistische waarden. Kan de plugin ze
+niet lezen (geen gekoppeld character), dan rekent hij conservatief met niveau 0 en biedt
+de profielpagina een knop om dat in één klik te herstellen.
+
 Elk lid beheert op `/corp-hauling/profiel/` **zijn eigen vloot**: voeg zoveel jump
 freighters toe als je wilt (Ark, Anshar, Nomad, Rhea), elk met een eigen naam en fit.
 Eén schip is actief — daarmee wordt op het contractenbord gerekend. Wisselen kan direct

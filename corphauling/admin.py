@@ -37,9 +37,9 @@ class ConfigAdmin(admin.ModelAdmin):
         par = self._par(obj)
         if not par:
             return "⚠ niet door te rekenen"
-        if obj.skills_uit_esi and par.get("skill_bron") != "esi":
-            # Wel aangevinkt, maar we konden de skills niet lezen: meestal een
-            # ontbrekend of verlopen token met de skills-scope.
+        if par.get("skill_bron") == "geen":
+            # Geen (geldig) token met de skills-scope: er wordt met niveau 0
+            # gerekend, en dat ziet de piloot zelf niet zomaar.
             return "⚠ geen skill-token"
         if not par.get("hold"):
             return "⚠ scheepsdata niet geladen"
@@ -69,9 +69,9 @@ class PilootAdmin(admin.ModelAdmin):
 
     list_display = ("gebruiker", "character", "schip", "schepen_aantal", "skills",
                     "skills_bron", "bereik", "verbruik", "hold", "signaal")
-    list_filter = ("skills_uit_esi", "schepen__schip_type_id")
+    list_filter = ("schepen__schip_type_id",)
     search_fields = ("user__username", "user__profile__main_character__character_name")
-    fields = ("user", "skills_uit_esi", "jdc", "jfc", "jf_skill", "rassen_skill")
+    fields = ("user",)
     inlines = ()   # wordt onderaan gezet, zodat SchipInline eerst bestaat
     # Bewust GEEN autocomplete_fields: dat eist een geregistreerde User-admin met
     # search_fields, en die heeft Alliance Auth niet. Django's systeemcheck (E039)
@@ -111,16 +111,14 @@ class PilootAdmin(admin.ModelAdmin):
     @admin.display(description=_("Skills uit"), boolean=False)
     def skills_bron(self, obj):
         bron = self._par(obj).get("skill_bron")
-        return {"esi": "EVE", "profiel": _("profiel"), "corp": _("corp")}.get(bron, "—")
+        return {"esi": "EVE", "geen": _("niet gelezen"), "corp": _("corp")}.get(bron, "—")
 
-    @admin.display(description=_("JDC / JFC"))
+    @admin.display(description=_("JDC / JFC / JF / ras"))
     def skills(self, obj):
         par = self._par(obj)
         if not par:
-            return f"{obj.jdc} / {obj.jfc}"
-        # Wat er écht gebruikt wordt (bij 'skills uit EVE' kan dat afwijken
-        # van wat er in het profiel staat).
-        return f"{par['jdc']} / {par['jfc']}"
+            return "—"
+        return f"{par['jdc']} / {par['jfc']} / {par['jf_skill']} / {par['rassen_skill']}"
 
     @admin.display(description=_("Bereik"))
     def bereik(self, obj):
@@ -143,9 +141,9 @@ class PilootAdmin(admin.ModelAdmin):
         par = self._par(obj)
         if not par:
             return "⚠ niet door te rekenen"
-        if obj.skills_uit_esi and par.get("skill_bron") != "esi":
-            # Wel aangevinkt, maar we konden de skills niet lezen: meestal een
-            # ontbrekend of verlopen token met de skills-scope.
+        if par.get("skill_bron") == "geen":
+            # Geen (geldig) token met de skills-scope: er wordt met niveau 0
+            # gerekend, en dat ziet de piloot zelf niet zomaar.
             return "⚠ geen skill-token"
         if not par.get("hold"):
             return "⚠ scheepsdata niet geladen"

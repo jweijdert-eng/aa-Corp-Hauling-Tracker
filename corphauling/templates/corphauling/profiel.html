@@ -89,20 +89,45 @@
     </div>
 
     <h3 class="cc-kop">{% translate "Mijn skills" %}</h3>
-    <p class="cc-dim small">{% translate "Deze gelden voor al je schepen." %}</p>
-    <form method="post" style="max-width: 520px;" class="mb-4">
-        {% csrf_token %}
-        <input type="hidden" name="actie" value="skills">
-        {% for veld in form %}
-            <div class="mb-3">
-                <label class="form-label" for="{{ veld.id_for_label }}">{{ veld.label }}</label>
-                {{ veld }}
-                {% if veld.help_text %}<div class="cc-dim small mt-1">{{ veld.help_text }}</div>{% endif %}
-                {% for fout in veld.errors %}<div class="cc-red small">{{ fout }}</div>{% endfor %}
+    {% if par.skill_bron == "esi" %}
+        <p class="cc-dim small">
+            {% blocktranslate with c=par.skill_character %}Rechtstreeks uit EVE gelezen van {{ c }} — je hoeft hier niets in te vullen.{% endblocktranslate %}
+        </p>
+        <div class="cc-skills mb-4">
+            <div class="cc-skill">
+                <span class="cc-skill-naam">{% translate "Jump Drive Calibration" %}</span>
+                <span class="cc-skill-niveau">{{ par.jdc }}</span>
+                <span class="cc-dim small">{% translate "sprongbereik" %} +20%/{% translate "niveau" %}</span>
             </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-sm cc-refresh">{% translate "Skills opslaan" %}</button>
-    </form>
+            <div class="cc-skill">
+                <span class="cc-skill-naam">{% translate "Jump Fuel Conservation" %}</span>
+                <span class="cc-skill-niveau">{{ par.jfc }}</span>
+                <span class="cc-dim small">{% translate "brandstof" %} −10%/{% translate "niveau" %}</span>
+            </div>
+            <div class="cc-skill">
+                <span class="cc-skill-naam">{% translate "Jump Freighters" %}</span>
+                <span class="cc-skill-niveau">{{ par.jf_skill }}</span>
+                <span class="cc-dim small">{% translate "hold" %} +10%, {% translate "brandstof" %} −10%/{% translate "niveau" %}</span>
+            </div>
+            <div class="cc-skill">
+                <span class="cc-skill-naam">{% translate "Freighter (ras)" %}</span>
+                <span class="cc-skill-niveau">{{ par.rassen_skill }}</span>
+                <span class="cc-dim small">{% translate "hold" %} +5%/{% translate "niveau" %}</span>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning" style="max-width: 620px;">
+            <p class="mb-2">
+                {% translate "Je skills konden niet uit EVE gelezen worden, dus er wordt met niveau 0 gerekend — je vrachtruimte valt te laag uit en je brandstof te hoog." %}
+            </p>
+            <p class="mb-3 small">
+                {% translate "Koppel je character één keer; daarna gaat het vanzelf." %}
+            </p>
+            <a href="{% url 'corphauling:koppel_skills' %}" class="btn btn-sm btn-warning">
+                {% translate "Character koppelen" %}
+            </a>
+        </div>
+    {% endif %}
 
     <h3 class="cc-kop">{% translate "Mijn schepen" %}</h3>
     {% if schepen %}

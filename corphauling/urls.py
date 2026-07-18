@@ -10,5 +10,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("profiel/", views.profiel, name="profiel"),
     path("schip/", views.schip_wisselen, name="schip_wisselen"),
+    path("skills/", views.koppel_skills, name="koppel_skills"),
     path("token/", views.grant_access, name="grant_access"),
 ]

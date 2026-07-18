@@ -165,3 +165,16 @@
     border: 1px solid var(--cc-border); border-radius: 6px;
     padding: .12rem .4rem; font-size: .78rem;
 }
+
+/* Skills, alleen-lezen uit EVE */
+.cc-app .cc-skills { display: flex; flex-wrap: wrap; gap: .5rem; }
+.cc-app .cc-skill {
+    display: flex; align-items: center; gap: .5rem;
+    padding: .4rem .7rem; border-radius: 8px; min-width: 260px;
+    background: var(--cc-surface); border: 1px solid var(--cc-border);
+}
+.cc-app .cc-skill-naam { font-weight: 600; flex: 1; }
+.cc-app .cc-skill-niveau {
+    font-weight: 700; font-size: 1.05rem; color: var(--cc-gold);
+    min-width: 1.2rem; text-align: center;
+}

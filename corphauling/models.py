@@ -136,28 +136,6 @@ class Piloot(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="corphauling_piloot",
     )
-    skills_uit_esi = models.BooleanField(
-        default=True, verbose_name=_("Skills uit EVE halen"),
-        help_text=_("Leest Jump Drive Calibration en Jump Fuel Conservation van je "
-                    "character. Zet uit om ze hieronder zelf in te vullen."),
-    )
-    jdc = models.PositiveSmallIntegerField(
-        default=5, verbose_name=_("Jump Drive Calibration"),
-        help_text=_("+20% sprongbereik per niveau (5,0 LY basis → 10,0 LY op V)."),
-    )
-    jfc = models.PositiveSmallIntegerField(
-        default=5, verbose_name=_("Jump Fuel Conservation"),
-        help_text=_("−10% isotopenverbruik per niveau."),
-    )
-    jf_skill = models.PositiveSmallIntegerField(
-        default=5, verbose_name=_("Jump Freighters"),
-        help_text=_("+10% vrachtruimte en −10% brandstof per niveau."),
-    )
-    rassen_skill = models.PositiveSmallIntegerField(
-        default=5, verbose_name=_("Freighter-skill van het ras"),
-        help_text=_("Caldari/Gallente/Minmatar/Amarr Freighter: +5% vrachtruimte per niveau."),
-    )
-
     class Meta:
         default_permissions = ()
         verbose_name = _("piloot-profiel")

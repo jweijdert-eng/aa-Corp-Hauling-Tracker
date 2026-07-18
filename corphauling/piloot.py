@@ -78,33 +78,27 @@ def parameters(user=None):
         schip_bron = "corp"
 
     # --- skills --------------------------------------------------------
+    # Altijd live uit EVE: dat is de enige bron die niet kan verouderen of
+    # verkeerd ingevuld raken. Lukt het niet, dan rekenen we conservatief met
+    # niveau 0 en zegt de pagina wat eraan schort.
     rassen_id = RASSEN_SKILL.get(schip.schip_type_id if schip else 0, 0)
-    char_naam = ""
-    esi_niveaus = None
-    if profiel and profiel.skills_uit_esi:
-        niveaus, char_naam = _skills_van_gebruiker(user, rassen_id)
-        esi_niveaus = niveaus
-        if niveaus:
-            jdc = niveaus.get(SKILL_JDC, 0)
-            jfc = niveaus.get(SKILL_JFC, 0)
-            jf_niv = niveaus.get(SKILL_JF, 0)
-            rassen_niv = niveaus.get(rassen_id, 0)
-            skill_bron = "esi"
-        else:                                # geen token of geen skills gevonden
-            jdc, jfc = profiel.jdc, profiel.jfc
-            jf_niv, rassen_niv = profiel.jf_skill, profiel.rassen_skill
-            skill_bron = "profiel"
+    niveaus, char_naam = _skills_van_gebruiker(user, rassen_id) if user else (None, "")
+    esi_niveaus = niveaus
+
+    if niveaus:
+        begrens = lambda n: min(5, max(0, n or 0))
+        jdc = begrens(niveaus.get(SKILL_JDC, 0))
+        jfc = begrens(niveaus.get(SKILL_JFC, 0))
+        jf_niv = begrens(niveaus.get(SKILL_JF, 0))
+        rassen_niv = begrens(niveaus.get(rassen_id, 0))
+        skill_bron = "esi"
     elif profiel:
-        jdc, jfc = profiel.jdc, profiel.jfc
-        jf_niv, rassen_niv = profiel.jf_skill, profiel.rassen_skill
-        skill_bron = "profiel"
+        jdc = jfc = jf_niv = rassen_niv = 0
+        skill_bron = "geen"          # geen token met de skills-scope
     else:
         jdc, jfc = 5, cfg.jf_brandstof_skill
-        jf_niv, rassen_niv = 0, 0            # zonder profiel geen schip → geen bonussen
-        skill_bron = "corp"
-
-    begrens = lambda n: min(5, max(0, n or 0))
-    jdc, jfc, jf_niv, rassen_niv = map(begrens, (jdc, jfc, jf_niv, rassen_niv))
+        jf_niv, rassen_niv = 0, 0
+        skill_bron = "corp"          # nog geen profiel: corp-instellingen
 
     # --- afgeleide waarden ---------------------------------------------
     # Bereik : Jump Drive Calibration, +20% per niveau.
