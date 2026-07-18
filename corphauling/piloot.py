@@ -141,6 +141,7 @@ def parameters(user=None):
         "skill_bron": skill_bron,
         "skill_character": char_naam,
         "heeft_profiel": profiel is not None,
+        "_esi_niveaus": esi_niveaus,
         "andere_schepen": _andere_schepen(
             profiel, schip, jf_niv, rassen_niv, esi_niveaus) if profiel else [],
     }
@@ -173,4 +174,45 @@ def _andere_schepen(profiel, actief, jf_niv, rassen_niv_actief, esi_niveaus):
             hold, _mods = hold_uit_fit(hold, s.fit_tekst)
         uit.append({"label": str(s), "hold": hold,
                     "schip": stats.get("naam", ""), "rassen_skill": rassen_niv})
+    return uit
+
+
+def schepen_overzicht(user):
+    """Per schip van deze piloot de doorgerekende cijfers, voor de profielpagina.
+
+    Zo ziet iemand in één oogopslag wat elk schip kan, in plaats van alleen
+    welke fit eraan hangt.
+    """
+    par = parameters(user)
+    profiel = Piloot.objects.filter(user=user).first()
+    if not profiel:
+        return []
+
+    jf_niv, rassen_fallback = par["jf_skill"], par["rassen_skill"]
+    esi_niveaus = par.get("_esi_niveaus")
+
+    uit = []
+    for schip in profiel.schepen.all():
+        stats = schip_stats(schip.schip_type_id)
+        basis = stats.get("hold") or 0
+        rassen_id = RASSEN_SKILL.get(schip.schip_type_id, 0)
+        rassen_niv = (min(5, max(0, esi_niveaus.get(rassen_id, 0)))
+                      if esi_niveaus else rassen_fallback)
+
+        hold = basis * (1 + 0.10 * jf_niv) * (1 + 0.05 * rassen_niv) if basis else 0
+        if hold and schip.fit_tekst.strip():
+            hold, _mods = hold_uit_fit(hold, schip.fit_tekst)
+
+        uit.append({
+            "obj": schip,
+            "type_id": schip.schip_type_id,
+            "schip": stats.get("naam") or schip.get_schip_type_id_display(),
+            "naam": schip.naam,
+            "fit": schip.corp_fit.naam if schip.corp_fit else "",
+            "hold": hold,
+            "isotopen_per_ly": (stats.get("isotopen_per_ly") or 0)
+                               * (1 - 0.10 * par["jfc"]) * (1 - 0.10 * jf_niv),
+            "bereik_ly": (stats.get("bereik_basis") or 5.0) * (1 + 0.20 * par["jdc"]),
+            "actief": schip.actief,
+        })
     return uit

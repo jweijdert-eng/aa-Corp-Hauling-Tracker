@@ -178,3 +178,30 @@
     font-weight: 700; font-size: 1.05rem; color: var(--cc-gold);
     min-width: 1.2rem; text-align: center;
 }
+
+/* Vloot-kaarten op de profielpagina */
+.cc-app .cc-vloot { display: flex; flex-direction: column; gap: .5rem; max-width: 820px; }
+.cc-app .cc-schip {
+    display: flex; align-items: center; gap: .9rem;
+    padding: .55rem .8rem; border-radius: 10px;
+    background: var(--cc-surface); border: 1px solid var(--cc-border);
+    border-left: 3px solid transparent;
+}
+.cc-app .cc-schip.is-actief {
+    border-left-color: var(--cc-green);
+    background: linear-gradient(90deg, rgba(62, 207, 110, .07), var(--cc-surface) 45%);
+}
+.cc-app .cc-schip-render {
+    width: 56px; height: 56px; border-radius: 8px; flex: none;
+    border: 1px solid var(--cc-border); object-fit: cover;
+}
+.cc-app .cc-schip-tekst { flex: 1; min-width: 0; }
+.cc-app .cc-schip-kop { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.cc-app .cc-schip-naam { font-weight: 700; font-size: 1rem; }
+.cc-app .cc-schip-cijfers {
+    display: flex; flex-wrap: wrap; gap: .9rem; margin-top: .25rem;
+    font-size: .82rem; color: var(--cc-dim); font-variant-numeric: tabular-nums;
+}
+.cc-app .cc-schip-cijfers strong { color: var(--cc-gold); font-size: .95rem; }
+.cc-app .cc-schip-knoppen { display: flex; align-items: center; gap: .3rem; flex: none; }
+.cc-app .cc-schip-knoppen form { margin: 0; }

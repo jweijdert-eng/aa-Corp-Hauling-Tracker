@@ -131,50 +131,50 @@
 
     <h3 class="cc-kop">{% translate "Mijn schepen" %}</h3>
     {% if schepen %}
-        <table class="table cc-table align-middle mb-3" style="max-width: 820px;">
-            <thead>
-                <tr>
-                    <th>{% translate "Schip" %}</th>
-                    <th>{% translate "Fit" %}</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for s in schepen %}
-                    <tr>
-                        <td>
-                            <strong>{{ s.get_schip_type_id_display }}</strong>
-                            {% if s.naam %}<span class="cc-dim">· {{ s.naam }}</span>{% endif %}
+        <div class="cc-vloot mb-3">
+            {% for s in schepen %}
+                <div class="cc-schip {% if s.actief %}is-actief{% endif %}">
+                    <img class="cc-schip-render" alt=""
+                         src="https://images.evetech.net/types/{{ s.type_id }}/render?size=128">
+                    <div class="cc-schip-tekst">
+                        <div class="cc-schip-kop">
+                            <span class="cc-schip-naam">{{ s.naam|default:s.schip }}</span>
                             {% if s.actief %}<span class="cc-badge cc-badge-actief">{% translate "actief" %}</span>{% endif %}
-                        </td>
-                        <td class="cc-dim small">
-                            {% if s.corp_fit %}{{ s.corp_fit.naam }}
-                            {% else %}<span class="cc-amber">{% translate "eigen fit (oud)" %}</span>{% endif %}
-                        </td>
-                        <td class="text-end">
-                            <a href="?bewerk={{ s.pk }}" class="cc-sort">{% translate "bewerken" %}</a>
-                            {% if not s.actief %}
-                                <form method="post" style="display:inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="actie" value="schip-actief">
-                                    <input type="hidden" name="schip_id" value="{{ s.pk }}">
-                                    <button type="submit" class="cc-sort cc-knop">{% translate "maak actief" %}</button>
-                                </form>
-                            {% endif %}
-                            <form method="post" style="display:inline"
-                                  onsubmit="return confirm('{% translate "Dit schip verwijderen?" %}')">
+                        </div>
+                        <div class="cc-dim small">
+                            {# Het scheepstype alleen als de eigen naam iets anders zegt #}
+                            {% if s.naam and s.naam != s.schip %}{{ s.schip }} · {% endif %}
+                            {{ s.fit|default:_("kale romp") }}
+                        </div>
+                        <div class="cc-schip-cijfers">
+                            <span><strong>{{ s.hold|floatformat:0 }}</strong> m³</span>
+                            <span>{{ s.isotopen_per_ly|floatformat:0 }} {% translate "iso/LY" %}</span>
+                            <span>{{ s.bereik_ly|floatformat:1 }} LY</span>
+                        </div>
+                    </div>
+                    <div class="cc-schip-knoppen">
+                        {% if not s.actief %}
+                            <form method="post">
                                 {% csrf_token %}
-                                <input type="hidden" name="actie" value="schip-weg">
-                                <input type="hidden" name="schip_id" value="{{ s.pk }}">
-                                <button type="submit" class="cc-sort cc-knop cc-knop-weg">×</button>
+                                <input type="hidden" name="actie" value="schip-actief">
+                                <input type="hidden" name="schip_id" value="{{ s.obj.pk }}">
+                                <button type="submit" class="cc-sort cc-knop">{% translate "maak actief" %}</button>
                             </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        {% endif %}
+                        <a href="?bewerk={{ s.obj.pk }}" class="cc-sort cc-knop">{% translate "bewerken" %}</a>
+                        <form method="post"
+                              onsubmit="return confirm('{% translate "Dit schip verwijderen?" %}')">
+                            {% csrf_token %}
+                            <input type="hidden" name="actie" value="schip-weg">
+                            <input type="hidden" name="schip_id" value="{{ s.obj.pk }}">
+                            <button type="submit" class="cc-knop cc-knop-weg" title="{% translate 'verwijderen' %}">×</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p class="cc-dim">{% translate "Nog geen schepen. Voeg er hieronder één toe." %}</p>
+        <p class="cc-dim">{% translate "Nog geen schepen. Kies hieronder een fit om er één toe te voegen." %}</p>
     {% endif %}
 
     <h4 class="cc-kop">

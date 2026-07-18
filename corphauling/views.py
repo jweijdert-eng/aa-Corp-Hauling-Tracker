@@ -20,7 +20,7 @@ from .esi import (
 )
 from .forms import SchipForm
 from .models import Config, CorpFit, Piloot, Schip
-from .piloot import parameters
+from .piloot import parameters, schepen_overzicht
 from .profit import build
 
 SORT_LABELS = [
@@ -145,7 +145,7 @@ def profiel(request: WSGIRequest) -> HttpResponse:
     return render(request, "corphauling/profiel.html", {
         "schip_form": SchipForm(instance=bewerken),
         "bewerken": bewerken,
-        "schepen": piloot.schepen.all(),
+        "schepen": schepen_overzicht(request.user),
         "par": parameters(request.user),
         "heeft_profiel": True,
     })
