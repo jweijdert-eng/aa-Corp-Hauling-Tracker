@@ -1,4 +1,4 @@
 """Corp Hauling — Alliance Auth-plugin (open koeriers-contracten met netto-winst)."""
 
-__version__ = "1.16.0"
+__version__ = "1.16.1"
 __title__ = "Corp Hauling"

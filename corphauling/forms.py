@@ -61,3 +61,41 @@ class CorpFitForm(forms.ModelForm):
                 "In deze fit staat geen module die de vrachtruimte vergroot. "
                 "Kloppen de modulenamen? (Controleer de spelling zoals in EVE.)"))
         return data
+
+
+class PilootAdminForm(forms.ModelForm):
+    """Piloot toevoegen zonder de kapotte raw_id-popup.
+
+    De gebruiker kies je uit een dropdown; bij het toevoegen worden alleen
+    gebruikers getoond die nog géén profiel hebben (voorkomt de "bestaat al"-fout,
+    want een profiel wordt ook automatisch aangemaakt zodra iemand z'n
+    profielpagina opent).
+    """
+
+    class Meta:
+        from .models import Piloot as _P
+        model = _P
+        fields = ("user",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from django.contrib.auth import get_user_model
+        from .models import Piloot
+
+        User = get_user_model()
+        qs = User.objects.all()
+        if self.instance and self.instance.pk:
+            # Bewerken: alleen deze gebruiker tonen (user wijzig je niet).
+            qs = User.objects.filter(pk=self.instance.user_id)
+            self.fields["user"].disabled = True
+        else:
+            # Toevoegen: alleen wie nog geen profiel heeft.
+            bezet = Piloot.objects.values_list("user_id", flat=True)
+            qs = qs.exclude(pk__in=bezet)
+        self.fields["user"].queryset = qs.select_related("profile__main_character").order_by("username")
+        self.fields["user"].label_from_instance = self._label
+
+    @staticmethod
+    def _label(user):
+        main = getattr(getattr(user, "profile", None), "main_character", None)
+        return f"{user.username} — {main.character_name}" if main else user.username

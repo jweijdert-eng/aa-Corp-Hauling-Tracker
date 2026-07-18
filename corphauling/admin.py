@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
-from .forms import CorpFitForm
+from .forms import CorpFitForm, PilootAdminForm
 from .models import Config, CorpFit, Piloot, Schip
 
 
@@ -72,12 +72,13 @@ class PilootAdmin(admin.ModelAdmin):
                     "skills_bron", "bereik", "verbruik", "hold", "signaal")
     list_filter = ("schepen__schip_type_id",)
     search_fields = ("user__username", "user__profile__main_character__character_name")
+    form = PilootAdminForm
     fields = ("user",)
     inlines = ()   # wordt onderaan gezet, zodat SchipInline eerst bestaat
-    # Bewust GEEN autocomplete_fields: dat eist een geregistreerde User-admin met
-    # search_fields, en die heeft Alliance Auth niet. Django's systeemcheck (E039)
-    # weigert dan te starten — de hele site ligt er dan uit.
-    raw_id_fields = ("user",)
+    # Gebruiker-keuze via PilootAdminForm (nette dropdown). Bewust GÉÉN
+    # autocomplete_fields/raw_id_fields: die eisen een geregistreerde User-admin
+    # met search_fields, en die heeft Alliance Auth niet — autocomplete geeft dan
+    # systeemcheck E039 (site start niet), raw_id een niet-werkende popup.
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("user")
