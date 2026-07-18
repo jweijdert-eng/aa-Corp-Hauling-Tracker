@@ -6,12 +6,47 @@ gebruikt characterscan ook en het is een stuk sneller/voorspelbaarder.
 
 import logging
 import math
+import threading
 import time
 
 import requests
 from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
+
+# Verouderde data blijft als terugval bestaan, zodat een pagina nooit synchroon
+# op ESI hoeft te wachten (stale-while-revalidate).
+STALE_KEEP_SECONDS = 7 * 86400
+
+
+def _swr(key, fresh_seconds, producer):
+    """Geef meteen wat er is; ververs alleen op de achtergrond als het oud is.
+
+    - Vers            → meteen terug.
+    - Verouderd       → meteen terug + één achtergrond-refresh (met lock).
+    - Niets in cache  → nu ophalen (blokkeert; alleen de allereerste keer).
+    """
+    box = cache.get(key)
+    now = time.time()
+    if isinstance(box, dict) and "__swr__" in box:
+        if now < box["u"]:
+            return box["v"]
+        if cache.add(f"{key}:lock", 1, 120):
+            def _refresh():
+                try:
+                    vers = producer()
+                    cache.set(key, {"__swr__": True, "v": vers, "u": time.time() + fresh_seconds},
+                              STALE_KEEP_SECONDS)
+                except Exception:  # noqa: BLE001 — achtergrondwerk mag stil falen
+                    logger.warning("Corp Hauling: achtergrond-refresh van %s mislukt",
+                                   key, exc_info=True)
+                finally:
+                    cache.delete(f"{key}:lock")
+            threading.Thread(target=_refresh, daemon=True).start()
+        return box["v"]
+    vers = producer()
+    cache.set(key, {"__swr__": True, "v": vers, "u": now + fresh_seconds}, STALE_KEEP_SECONDS)
+    return vers
 
 ESI = "https://esi.evetech.net/latest"
 UA = {"User-Agent": "aa-corp-hauling (Dutch Legions)"}
@@ -437,30 +472,28 @@ def resolve_type_ids(namen):
 
 
 def character_skills(character_id):
-    """{skill_id: niveau} van één character, of {} als er geen bruikbaar token is."""
-    key = f"cc_skills_{character_id}"
-    cached = cache.get(key)
-    if cached is not None:
-        return cached
+    """{skill_id: niveau} van één character, of {} als er geen bruikbaar token is.
 
-    from esi.models import Token
+    Skills veranderen traag, dus stale-while-revalidate: de pagina krijgt de
+    laatst bekende skills meteen en de verse versie komt op de achtergrond.
+    """
+    def _produce():
+        from esi.models import Token
 
-    niveaus = {}
-    for token in Token.objects.filter(character_id=character_id,
-                                      scopes__name=SKILLS_SCOPE).order_by("-created"):
-        try:
-            ok, data = _request(f"/characters/{character_id}/skills/",
-                                token=token.valid_access_token())
-        except Exception as exc:  # noqa: BLE001 — verlopen/ingetrokken token
-            logger.info("Skills van %s niet op te halen: %s", character_id, exc)
-            continue
-        if ok and data:
-            niveaus = {s["skill_id"]: s["trained_skill_level"]
-                       for s in data.get("skills", [])}
-            break
+        for token in Token.objects.filter(character_id=character_id,
+                                          scopes__name=SKILLS_SCOPE).order_by("-created"):
+            try:
+                ok, data = _request(f"/characters/{character_id}/skills/",
+                                    token=token.valid_access_token())
+            except Exception as exc:  # noqa: BLE001 — verlopen/ingetrokken token
+                logger.info("Skills van %s niet op te halen: %s", character_id, exc)
+                continue
+            if ok and data:
+                return {s["skill_id"]: s["trained_skill_level"]
+                        for s in data.get("skills", [])}
+        return {}
 
-    cache.set(key, niveaus, 3600 if niveaus else 600)
-    return niveaus
+    return _swr(f"cc_skills_{character_id}", 3600, _produce)
 
 
 def route(origin_system, destination_system, flag="shortest"):
