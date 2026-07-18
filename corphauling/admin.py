@@ -72,7 +72,10 @@ class PilootAdmin(admin.ModelAdmin):
     list_filter = ("schip_type_id", "skills_uit_esi")
     search_fields = ("user__username", "user__profile__main_character__character_name")
     fields = ("user", "schip_type_id", "skills_uit_esi", "jdc", "jfc")
-    autocomplete_fields = ("user",)
+    # Bewust GEEN autocomplete_fields: dat eist een geregistreerde User-admin met
+    # search_fields, en die heeft Alliance Auth niet. Django's systeemcheck (E039)
+    # weigert dan te starten — de hele site ligt er dan uit.
+    raw_id_fields = ("user",)
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("user")

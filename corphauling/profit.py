@@ -32,15 +32,31 @@ def _parse_date(value):
         return None
 
 
+def _sec_klasse(security):
+    """CSS-klasse voor de securitystatus — zelfde indeling als in EVE zelf."""
+    if security is None:
+        return "cc-sec-onbekend"
+    afgerond = round(security, 1)
+    if afgerond >= 0.5:
+        return "cc-sec-hi"
+    if afgerond > 0.0:
+        return "cc-sec-low"
+    return "cc-sec-null"
+
+
 def _endpoint(location_id):
     """Locatie + het systeem eromheen, klaar voor weergave."""
     loc = location_info(location_id)
     sys_info = system_info(loc["system_id"])
+    security = sys_info["security"]
     return {
         "name": loc["name"],
         "system_id": loc["system_id"],
         "system": sys_info["name"],
-        "security": sys_info["security"],
+        "security": security,
+        # Voor de weergave: afgerond getal + kleurklasse
+        "sec_fmt": f"{round(security, 1):.1f}" if security is not None else "",
+        "sec_klasse": _sec_klasse(security),
     }
 
 

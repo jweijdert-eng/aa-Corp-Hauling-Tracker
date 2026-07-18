@@ -67,9 +67,13 @@
                     <tr class="{% if row.negative %}cc-loss{% endif %}">
                         <td>
                             <div class="cc-route">
-                                <span class="cc-sys">{{ row.start.system }}</span>
+                                <span class="cc-sys {{ row.start.sec_klasse }}">
+                                    {{ row.start.system }}<span class="cc-sec">{{ row.start.sec_fmt }}</span>
+                                </span>
                                 <span class="cc-arrow">→</span>
-                                <span class="cc-sys">{{ row.end.system }}</span>
+                                <span class="cc-sys {{ row.end.sec_klasse }}">
+                                    {{ row.end.system }}<span class="cc-sec">{{ row.end.sec_fmt }}</span>
+                                </span>
                                 {% if row.danger == "none" %}
                                     <span class="cc-badge cc-badge-red" title="{% translate 'Geen highsec-route: bestemming ligt in low/nullsec' %}">
                                         {% translate "low/null" %}
@@ -84,9 +88,17 @@
                                     </span>
                                 {% endif %}
                             </div>
-                            <div class="cc-dim small">{{ row.start.name }} → {{ row.end.name }}</div>
-                            <div class="cc-dim small">
-                                {% translate "van" %} {{ row.issuer }}{% if row.title %} · {{ row.title }}{% endif %}
+                            <div class="cc-stations">
+                                <span class="cc-pin">📍</span>{{ row.start.name }}
+                                <span class="cc-arrow-klein">→</span>{{ row.end.name }}
+                            </div>
+                            <div class="cc-meta">
+                                {% if row.issuer_id %}
+                                    <img class="cc-avatar" alt=""
+                                         src="https://images.evetech.net/characters/{{ row.issuer_id }}/portrait?size=32">
+                                {% endif %}
+                                <span>{{ row.issuer }}</span>
+                                {% if row.title %}<span class="cc-titel">{{ row.title }}</span>{% endif %}
                             </div>
                         </td>
                         <td class="text-end">

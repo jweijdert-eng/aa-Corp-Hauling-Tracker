@@ -78,3 +78,42 @@
 }
 .cc-app .cc-badge-red { color: var(--cc-red); background: rgba(224, 85, 85, .15); border: 1px solid rgba(224, 85, 85, .5); }
 .cc-app .cc-badge-amber { color: var(--cc-amber); background: rgba(240, 147, 43, .15); border: 1px solid rgba(240, 147, 43, .5); }
+
+/* --- Route-cel: systemen, stations en herkomst --------------------------- */
+
+/* Systeemnaam met securitykleur, zoals in EVE zelf */
+.cc-app .cc-sys {
+    display: inline-flex; align-items: baseline; gap: .3rem;
+    padding: .05rem .35rem; border-radius: 5px;
+    background: rgba(255, 255, 255, .04); white-space: nowrap;
+}
+.cc-app .cc-sec { font-size: .68rem; font-weight: 700; opacity: .85; font-variant-numeric: tabular-nums; }
+.cc-app .cc-sec-hi        { color: #3ecf6e; }   /* highsec  */
+.cc-app .cc-sec-low       { color: #f0932b; }   /* lowsec   */
+.cc-app .cc-sec-null      { color: #e05555; }   /* nullsec  */
+.cc-app .cc-sec-onbekend  { color: var(--cc-dim); }
+
+.cc-app .cc-route .cc-arrow { font-size: 1.05rem; opacity: .7; }
+
+/* Stationsregel: aanwezig maar rustig */
+.cc-app .cc-stations {
+    font-size: .74rem; color: var(--cc-dim); margin-top: .25rem;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .3rem;
+}
+.cc-app .cc-pin { opacity: .75; }
+.cc-app .cc-arrow-klein { color: var(--cc-blue); opacity: .8; }
+
+/* Wie het contract uitschreef, met portret */
+.cc-app .cc-meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: .35rem;
+    margin-top: .3rem; font-size: .74rem; color: var(--cc-dim);
+}
+.cc-app .cc-avatar {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1px solid var(--cc-border); flex: none;
+}
+.cc-app .cc-meta .cc-titel {
+    padding: .05rem .4rem; border-radius: 999px; font-weight: 600;
+    color: var(--cc-blue); background: rgba(0, 180, 216, .12);
+    border: 1px solid rgba(0, 180, 216, .35);
+}
