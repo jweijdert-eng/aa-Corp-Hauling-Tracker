@@ -18,7 +18,7 @@ optioneel structures-token.
 ## Installatie
 
 ```bash
-pip install git+https://github.com/jweijdert-eng/aa-Corp-Hauling.git
+pip install git+https://github.com/jweijdert-eng/aa-Corp-Hauling-Tracker.git
 ```
 
 Voeg `corphauling` toe aan `INSTALLED_APPS`, en draai `migrate` + `collectstatic`.
