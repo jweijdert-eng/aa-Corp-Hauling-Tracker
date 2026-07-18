@@ -14,14 +14,30 @@
             <form method="post" action="{% url 'corphauling:schip_wisselen' %}" class="cc-wissel">
                 {% csrf_token %}
                 <input type="hidden" name="terug" value="{{ request.get_full_path }}">
-                <label for="cc-schipkiezer">{% translate "rekenen met" %}</label>
-                <select name="schip_id" id="cc-schipkiezer" class="cc-select"
-                        onchange="this.form.submit()">
-                    {% for s in mijn_schepen %}
-                        <option value="{{ s.pk }}" {% if s.actief %}selected{% endif %}>{{ s }}</option>
-                    {% endfor %}
-                </select>
-                <noscript><button type="submit" class="cc-sort">{% translate "wissel" %}</button></noscript>
+                <span class="cc-dim small">{% translate "rekenen met" %}</span>
+                <div class="dropdown">
+                    <button class="cc-schipknop dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {% for s in mijn_schepen %}{% if s.actief %}
+                            <img src="https://images.evetech.net/types/{{ s.type_id }}/icon?size=32"
+                                 alt="" class="cc-schipicoon">
+                            <span>{{ s.naam|default:s.schip }}</span>
+                        {% endif %}{% endfor %}
+                    </button>
+                    <ul class="dropdown-menu cc-schipmenu">
+                        {% for s in mijn_schepen %}
+                            <li>
+                                <button type="submit" name="schip_id" value="{{ s.obj.pk }}"
+                                        class="dropdown-item cc-schipitem {% if s.actief %}is-actief{% endif %}">
+                                    <img src="https://images.evetech.net/types/{{ s.type_id }}/icon?size=32"
+                                         alt="" class="cc-schipicoon">
+                                    <span class="cc-schipitem-naam">{{ s.naam|default:s.schip }}</span>
+                                    <span class="cc-dim small">{{ s.hold|floatformat:0 }} m³</span>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </form>
         {% endif %}
         <a href="{% url 'corphauling:profiel' %}" class="cc-sort">{% translate "profiel aanpassen" %}</a>

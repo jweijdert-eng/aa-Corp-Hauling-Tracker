@@ -70,9 +70,10 @@ def index(request: WSGIRequest) -> HttpResponse:
 
     corp_name = cfg.corp_name or names.get(corp_id) or (f"#{corp_id}" if corp_id else "")
 
-    piloot = Piloot.objects.filter(user=request.user).first()
     return render(request, "corphauling/contracts.html", {
-        "mijn_schepen": piloot.schepen.all() if piloot else [],
+        # Met de doorgerekende cijfers erbij, zodat de keuzelijst kan tonen
+        # wat elk schip aankan.
+        "mijn_schepen": schepen_overzicht(request.user),
         "rows": rows,
         "totals": totals,
         "sort": sort,

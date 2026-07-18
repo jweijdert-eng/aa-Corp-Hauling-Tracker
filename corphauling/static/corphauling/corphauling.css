@@ -205,3 +205,28 @@
 .cc-app .cc-schip-cijfers strong { color: var(--cc-gold); font-size: .95rem; }
 .cc-app .cc-schip-knoppen { display: flex; align-items: center; gap: .3rem; flex: none; }
 .cc-app .cc-schip-knoppen form { margin: 0; }
+
+/* Schipkiezer met iconen (vervangt de kale <select>) */
+.cc-app .cc-schipicoon {
+    width: 22px; height: 22px; border-radius: 4px; flex: none;
+    border: 1px solid var(--cc-border);
+}
+.cc-app .cc-schipknop {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .15rem .55rem .15rem .3rem; border-radius: 999px;
+    background: var(--cc-surface-2); color: var(--cc-text);
+    border: 1px solid var(--cc-border); font-size: .8rem; cursor: pointer;
+}
+.cc-app .cc-schipknop:hover { border-color: var(--cc-blue); }
+.cc-app .cc-schipmenu {
+    background: var(--cc-surface); border: 1px solid var(--cc-border);
+    padding: .25rem; min-width: 240px;
+}
+.cc-app .cc-schipitem {
+    display: flex; align-items: center; gap: .5rem; width: 100%;
+    padding: .35rem .5rem; border-radius: 6px; border: 0;
+    background: none; color: var(--cc-text); cursor: pointer; text-align: left;
+}
+.cc-app .cc-schipitem:hover { background: var(--cc-surface-2); color: var(--cc-text); }
+.cc-app .cc-schipitem.is-actief { color: var(--cc-green); font-weight: 700; }
+.cc-app .cc-schipitem-naam { flex: 1; }
