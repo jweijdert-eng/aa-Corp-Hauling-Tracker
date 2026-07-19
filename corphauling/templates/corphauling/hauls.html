@@ -2,7 +2,13 @@
 {% load i18n %}
 
 {% block details %}
-    <h2 class="mb-3">🚚 {% translate "Mijn haul-verdiensten" %}</h2>
+    <div class="cc-hero mb-3">
+        <div class="cc-hero-icon">🚚</div>
+        <div class="cc-hero-tekst">
+            <h1 class="cc-hero-title">{% translate "Mijn Hauling" %}</h1>
+            <div class="cc-hero-sub">{% translate "verdiensten uit je afgeleverde koeriers-contracten" %}</div>
+        </div>
+    </div>
 
     {% if no_token %}
         <div class="alert alert-warning" style="max-width: 640px;">
@@ -113,6 +119,19 @@
     {% endif %}
 
     <style>
+        /* Hero-kop */
+        .cc-app .cc-hero { display: flex; align-items: center; gap: 1rem;
+            padding: 1.1rem 1.3rem; border-radius: 14px;
+            background: linear-gradient(120deg, rgba(0,180,216,.14), rgba(62,207,110,.08) 55%, var(--cc-surface) 100%);
+            border: 1px solid var(--cc-border); }
+        .cc-app .cc-hero-icon { font-size: 2rem; line-height: 1; flex: none;
+            width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
+            border-radius: 14px; background: rgba(0,180,216,.15); border: 1px solid rgba(0,180,216,.35); }
+        .cc-app .cc-hero-title { margin: 0; font-size: 1.7rem; font-weight: 800; letter-spacing: -.01em;
+            background: linear-gradient(90deg, #7fe0ff, #3ecf6e); -webkit-background-clip: text;
+            background-clip: text; color: transparent; }
+        .cc-app .cc-hero-sub { color: var(--cc-dim); font-size: .85rem; margin-top: .15rem; }
+
         .cc-app .cc-chart-card { padding: .8rem 1rem; border-radius: 10px;
             background: var(--cc-surface); border: 1px solid var(--cc-border); }
         .cc-app .cc-chart-title { font-size: .68rem; font-weight: 700; letter-spacing: .05em;
