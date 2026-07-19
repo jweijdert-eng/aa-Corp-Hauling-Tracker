@@ -3,7 +3,8 @@
 
 {% block details %}
     <div class="cc-hero mb-3">
-        <div class="cc-hero-icon">🚚</div>
+        <img class="cc-hero-icon" alt=""
+             src="https://images.evetech.net/types/28844/render?size=128">
         <div class="cc-hero-tekst">
             <h1 class="cc-hero-title">{% translate "Mijn Hauling" %}</h1>
             <div class="cc-hero-sub">{% translate "verdiensten uit je afgeleverde koeriers-contracten" %}</div>
@@ -124,9 +125,9 @@
             padding: 1.1rem 1.3rem; border-radius: 14px;
             background: linear-gradient(120deg, rgba(0,180,216,.14), rgba(62,207,110,.08) 55%, var(--cc-surface) 100%);
             border: 1px solid var(--cc-border); }
-        .cc-app .cc-hero-icon { font-size: 2rem; line-height: 1; flex: none;
-            width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
-            border-radius: 14px; background: rgba(0,180,216,.15); border: 1px solid rgba(0,180,216,.35); }
+        .cc-app .cc-hero-icon { flex: none; width: 64px; height: 64px; object-fit: cover;
+            border-radius: 14px; background: rgba(0,180,216,.12);
+            border: 1px solid rgba(0,180,216,.35); }
         .cc-app .cc-hero-title { margin: 0; font-size: 1.7rem; font-weight: 800; letter-spacing: -.01em;
             background: linear-gradient(90deg, #7fe0ff, #3ecf6e); -webkit-background-clip: text;
             background-clip: text; color: transparent; }
