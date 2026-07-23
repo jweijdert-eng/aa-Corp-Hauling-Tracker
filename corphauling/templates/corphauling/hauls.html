@@ -37,24 +37,24 @@
 
         {# Samenvatting #}
         <div class="cc-stats mb-3">
-            <div class="cc-stat">
+            <div class="cc-stat cc-stat--green">
                 <span class="cc-stat-label">{% translate "Totaal verdiend" %}</span>
                 <span class="cc-stat-value cc-green">{{ stats.totaal_fmt }}</span>
                 <span class="cc-dim small">{{ stats.aantal_klaar }} {% translate "ritten voltooid" %}</span>
             </div>
-            <div class="cc-stat">
+            <div class="cc-stat cc-stat--gold">
                 <span class="cc-stat-label">{% translate "Gemiddeld per dag" %}</span>
                 <span class="cc-stat-value cc-gold">{{ stats.gem_per_dag_fmt }}</span>
                 <span class="cc-dim small">{% translate "over" %} {{ stats.actieve_dagen }} {% translate "actieve dagen" %}</span>
             </div>
-            <div class="cc-stat">
+            <div class="cc-stat cc-stat--blue">
                 <span class="cc-stat-label">{% translate "Volume gehauld" %}</span>
-                <span class="cc-stat-value">{{ stats.volume_fmt }} m³</span>
+                <span class="cc-stat-value cc-blue">{{ stats.volume_fmt }} m³</span>
                 <span class="cc-dim small">{{ stats.per_m3_fmt }}/m³</span>
             </div>
-            <div class="cc-stat">
+            <div class="cc-stat cc-stat--amber">
                 <span class="cc-stat-label">{% translate "Onderweg" %}</span>
-                <span class="cc-stat-value">{{ stats.aantal_bezig }}</span>
+                <span class="cc-stat-value cc-amber">{{ stats.aantal_bezig }}</span>
                 {% if stats.aantal_gefaald %}
                     <span class="cc-dim small cc-red">{{ stats.aantal_gefaald }} {% translate "gefaald" %} · −{{ stats.verlies_fmt }}</span>
                 {% else %}
@@ -81,7 +81,7 @@
 
         {# Onderweg — lopende ritten #}
         {% if onderweg %}
-        <div class="cc-panel mb-3">
+        <div class="cc-panel cc-panel--amber mb-3">
             <div class="cc-panel-head">
                 {% translate "ONDERWEG" %} — {{ onderweg|length }} {% translate "CONTRACTEN" %}
                 ({{ onderweg_totaal_fmt }} {% translate "ISK te verdienen" %})
@@ -113,7 +113,7 @@
         {% endif %}
 
         {# Voltooide hauls #}
-        <div class="cc-panel">
+        <div class="cc-panel cc-panel--green">
             <div class="cc-panel-head">{% translate "VOLTOOIDE HAULS" %} — {{ voltooid|length }}</div>
             <div class="table-responsive">
                 <table class="table cc-table align-middle mb-0">
@@ -206,6 +206,43 @@
             font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
             color: var(--cc-dim); }
         .cc-app .cc-panel .cc-table { margin-bottom: 0; }
+
+        /* Ontbrekende tekstkleuren */
+        .cc-app .cc-blue { color: var(--cc-blue); }
+        .cc-app .cc-amber { color: var(--cc-amber); }
+
+        /* Gekleurde panel-accenten: Onderweg = amber, Voltooide = groen */
+        .cc-app .cc-panel--amber { border-left: 3px solid var(--cc-amber); }
+        .cc-app .cc-panel--amber .cc-panel-head { color: var(--cc-amber);
+            background: linear-gradient(90deg, rgba(240,147,43,.14), transparent 65%); }
+        .cc-app .cc-panel--green { border-left: 3px solid var(--cc-green); }
+        .cc-app .cc-panel--green .cc-panel-head { color: var(--cc-green);
+            background: linear-gradient(90deg, rgba(62,207,110,.14), transparent 65%); }
+
+        /* Stat-kaarten met accentkleur (rand + subtiele tint + gekleurd label) */
+        .cc-app .cc-stat { border-left-width: 3px; }
+        .cc-app .cc-stat--green { border-left-color: var(--cc-green);
+            background: linear-gradient(135deg, rgba(62,207,110,.12), var(--cc-surface) 62%); }
+        .cc-app .cc-stat--green .cc-stat-label { color: var(--cc-green); }
+        .cc-app .cc-stat--gold { border-left-color: var(--cc-gold);
+            background: linear-gradient(135deg, rgba(240,192,64,.12), var(--cc-surface) 62%); }
+        .cc-app .cc-stat--gold .cc-stat-label { color: var(--cc-gold); }
+        .cc-app .cc-stat--blue { border-left-color: var(--cc-blue);
+            background: linear-gradient(135deg, rgba(0,180,216,.12), var(--cc-surface) 62%); }
+        .cc-app .cc-stat--blue .cc-stat-label { color: var(--cc-blue); }
+        .cc-app .cc-stat--amber { border-left-color: var(--cc-amber);
+            background: linear-gradient(135deg, rgba(240,147,43,.12), var(--cc-surface) 62%); }
+        .cc-app .cc-stat--amber .cc-stat-label { color: var(--cc-amber); }
+
+        /* Route: blauwe pijl + chips die opvallen */
+        .cc-app .cc-route .cc-arrow { color: var(--cc-blue); opacity: 1; }
+        .cc-app .cc-sys { background: rgba(0,180,216,.10);
+            border: 1px solid rgba(0,180,216,.24); color: var(--cc-text); font-weight: 700; }
+
+        /* Kolomkoppen iets levendiger */
+        .cc-app .cc-panel .cc-table > thead th {
+            background: var(--cc-surface-2); color: #aab0d4;
+            border-bottom: 1px solid rgba(0,180,216,.22); }
 
         /* DEMO-label */
         .cc-app .cc-demo { display: inline-block; font-size: .55rem; font-weight: 800;
