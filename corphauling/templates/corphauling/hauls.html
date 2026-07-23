@@ -92,9 +92,9 @@
                         <tr>
                             <td>
                                 <div class="cc-route">
-                                    <span class="cc-sys">{{ h.start }}{% if h.start_sec_fmt %}<span class="cc-sec cc-sec-{{ h.start_klasse }}">{{ h.start_sec_fmt }}</span>{% endif %}</span>
+                                    <span class="cc-sys">{% if h.start_sec_fmt %}<span class="cc-sec cc-sec-{{ h.start_klasse }}">{{ h.start_sec_fmt }}</span>{% endif %}{{ h.start }}</span>
                                     <span class="cc-arrow">→</span>
-                                    <span class="cc-sys">{{ h.eind }}{% if h.eind_sec_fmt %}<span class="cc-sec cc-sec-{{ h.eind_klasse }}">{{ h.eind_sec_fmt }}</span>{% endif %}</span>
+                                    <span class="cc-sys">{% if h.eind_sec_fmt %}<span class="cc-sec cc-sec-{{ h.eind_klasse }}">{{ h.eind_sec_fmt }}</span>{% endif %}{{ h.eind }}</span>
                                 </div>
                             </td>
                             <td class="cc-dim small">{{ h.volume_fmt }} m³</td>
@@ -136,9 +136,9 @@
                                 <td class="small" title="{% translate 'Tijd tussen accepteren en opleveren' %}">{{ h.duur_fmt }}</td>
                                 <td>
                                     <div class="cc-route">
-                                        <span class="cc-sys">{{ h.start }}{% if h.start_sec_fmt %}<span class="cc-sec cc-sec-{{ h.start_klasse }}">{{ h.start_sec_fmt }}</span>{% endif %}</span>
+                                        <span class="cc-sys">{% if h.start_sec_fmt %}<span class="cc-sec cc-sec-{{ h.start_klasse }}">{{ h.start_sec_fmt }}</span>{% endif %}{{ h.start }}</span>
                                         <span class="cc-arrow">→</span>
-                                        <span class="cc-sys">{{ h.eind }}{% if h.eind_sec_fmt %}<span class="cc-sec cc-sec-{{ h.eind_klasse }}">{{ h.eind_sec_fmt }}</span>{% endif %}</span>
+                                        <span class="cc-sys">{% if h.eind_sec_fmt %}<span class="cc-sec cc-sec-{{ h.eind_klasse }}">{{ h.eind_sec_fmt }}</span>{% endif %}{{ h.eind }}</span>
                                     </div>
                                     {% if h.titel %}<div class="cc-dim small">{{ h.titel }}</div>{% endif %}
                                 </td>
