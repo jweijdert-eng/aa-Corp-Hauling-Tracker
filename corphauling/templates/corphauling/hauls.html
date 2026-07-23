@@ -89,7 +89,9 @@
                             <th class="text-end">{% translate "Beloning" %}</th>
                             <th class="text-end">{% translate "Volume" %}</th>
                             <th>{% translate "Status" %}</th>
-                            <th>{% translate "Voltooid" %}</th>
+                            <th>{% translate "Geaccepteerd" %}</th>
+                            <th>{% translate "Opgeleverd" %}</th>
+                            <th class="text-end">{% translate "Duur" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -116,8 +118,12 @@
                                     {% else %}<span class="cc-dim small">{{ h.status }}</span>{% endif %}
                                 </td>
                                 <td class="cc-dim small">
+                                    {% if h.date_accepted %}✔ {{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}
+                                </td>
+                                <td class="cc-dim small">
                                     {% if h.date_completed %}{{ h.date_completed|date:"j M H:i" }}{% else %}—{% endif %}
                                 </td>
+                                <td class="text-end" title="{% translate 'Tijd tussen accepteren en opleveren' %}">{{ h.duur_fmt }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

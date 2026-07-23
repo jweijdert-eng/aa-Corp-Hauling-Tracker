@@ -25,6 +25,23 @@ def fmt_isk(value):
     return f"{value:,.0f}".replace(",", ".")
 
 
+def fmt_dur(start, end):
+    """Duur tussen accepteren en opleveren, compact: '2d 3u' / '4u 10m' / '15m'."""
+    if not start or not end:
+        return "—"
+    seconden = (end - start).total_seconds()
+    if seconden < 0:
+        return "—"
+    m = int(seconden // 60)
+    h = m // 60
+    d = h // 24
+    if d:
+        return f"{d}d {h % 24}u"
+    if h:
+        return f"{h}u {m % 60}m"
+    return f"{m}m"
+
+
 def _characters(user):
     """De EveCharacters van een gebruiker (main eerst)."""
     try:
@@ -99,6 +116,7 @@ def user_hauls(user):
         start = loc_naam.get(c.get("start_location_id"), "?")
         eind = loc_naam.get(c.get("end_location_id"), "?")
         voltooid = _parse(c.get("date_completed"))
+        geaccepteerd = _parse(c.get("date_accepted"))
         hauls.append({
             "id": c["contract_id"],
             "character_id": c["_acc"],
@@ -115,6 +133,8 @@ def user_hauls(user):
             "start_vol": start, "eind_vol": eind,
             "titel": c.get("title") or "",
             "date_completed": voltooid,
+            "date_accepted": geaccepteerd,
+            "duur_fmt": fmt_dur(geaccepteerd, voltooid),
             "date_issued": _parse(c.get("date_issued")),
             "is_klaar": c.get("status") in FINISHED,
             "is_bezig": c.get("status") == "in_progress",
@@ -204,6 +224,7 @@ def capture_hauls(user, live_hauls):
                 "title": (h["titel"] or "")[:255],
                 "failed": h["is_gefaald"],
                 "date_completed": wanneer,
+                "date_accepted": h.get("date_accepted"),
             },
         )
 
@@ -223,6 +244,8 @@ def _model_to_dict(h):
         "start": h.start_name, "eind": h.end_name,
         "titel": h.title,
         "date_completed": h.date_completed,
+        "date_accepted": h.date_accepted,
+        "duur_fmt": fmt_dur(h.date_accepted, h.date_completed),
         "is_klaar": not h.failed,
         "is_bezig": False,
         "is_gefaald": h.failed,

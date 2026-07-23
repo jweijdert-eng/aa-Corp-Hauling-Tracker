@@ -38,6 +38,7 @@ class Haul(models.Model):
     title = models.CharField(max_length=255, blank=True, default="")
 
     failed = models.BooleanField(default=False)     # False = netjes afgeleverd
+    date_accepted = models.DateTimeField(null=True, blank=True)   # wanneer aangenomen
     date_completed = models.DateTimeField()
     captured_at = models.DateTimeField(auto_now_add=True)
 
