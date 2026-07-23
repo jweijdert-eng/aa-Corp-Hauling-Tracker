@@ -97,11 +97,11 @@
                                     <span class="cc-sys">{% if h.eind_sec_fmt %}<span class="cc-sec cc-sec-{{ h.eind_klasse }}">{{ h.eind_sec_fmt }}</span>{% endif %}{{ h.eind }}</span>
                                 </div>
                             </td>
-                            <td class="cc-dim small">{{ h.volume_fmt }} m³</td>
-                            <td class="cc-dim small">
+                            <td class="small cc-c-vol">{{ h.volume_fmt }} m³</td>
+                            <td class="small cc-c-pilot">
                                 {{ h.piloot }}{% if h.is_demo %} <span class="cc-demo">DEMO</span>{% endif %}
                             </td>
-                            <td class="cc-dim small" title="{% translate 'Geaccepteerd op' %}">
+                            <td class="small cc-c-accept" title="{% translate 'Geaccepteerd op' %}">
                                 {% if h.date_accepted %}✔ {{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}
                             </td>
                             <td class="text-end cc-green fw-bold">+{{ h.beloning_fmt }}</td>
@@ -131,9 +131,9 @@
                     <tbody>
                         {% for h in voltooid %}
                             <tr class="{% if h.is_gefaald %}cc-loss{% endif %}">
-                                <td class="cc-dim small">{% if h.date_accepted %}{{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}</td>
-                                <td class="cc-dim small">{% if h.date_completed %}{{ h.date_completed|date:"j M H:i" }}{% else %}—{% endif %}</td>
-                                <td class="small" title="{% translate 'Tijd tussen accepteren en opleveren' %}">{{ h.duur_fmt }}</td>
+                                <td class="small cc-c-accept">{% if h.date_accepted %}{{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}</td>
+                                <td class="small cc-c-deliver">{% if h.date_completed %}{{ h.date_completed|date:"j M H:i" }}{% else %}—{% endif %}</td>
+                                <td class="small cc-c-duur" title="{% translate 'Tijd tussen accepteren en opleveren' %}">{{ h.duur_fmt }}</td>
                                 <td>
                                     <div class="cc-route">
                                         <span class="cc-sys">{% if h.start_sec_fmt %}<span class="cc-sec cc-sec-{{ h.start_klasse }}">{{ h.start_sec_fmt }}</span>{% endif %}{{ h.start }}</span>
@@ -142,8 +142,8 @@
                                     </div>
                                     {% if h.titel %}<div class="cc-dim small">{{ h.titel }}</div>{% endif %}
                                 </td>
-                                <td class="cc-dim small">{{ h.volume_fmt }} m³</td>
-                                <td class="cc-dim small">
+                                <td class="small cc-c-vol">{{ h.volume_fmt }} m³</td>
+                                <td class="small cc-c-pilot">
                                     {{ h.piloot }}{% if h.is_demo %} <span class="cc-demo">DEMO</span>{% endif %}
                                 </td>
                                 <td class="text-end fw-bold {% if h.is_gefaald %}cc-red{% else %}cc-green{% endif %}">
@@ -254,6 +254,14 @@
             font-size: .78rem; font-weight: 600; letter-spacing: .01em; }
         .cc-app .cc-sec { font-size: .64rem; font-weight: 800; opacity: .95;
             font-variant-numeric: tabular-nums; }
+
+        /* Kolomkleuren: elke kolom een eigen rustige tint */
+        .cc-app .cc-panel .cc-table td.cc-c-accept  { color: #7aa7d0; }   /* geaccepteerd — blauw */
+        .cc-app .cc-panel .cc-table td.cc-c-deliver { color: #63c98a; }   /* opgeleverd — groen */
+        .cc-app .cc-panel .cc-table td.cc-c-duur    { color: var(--cc-gold); }   /* duur — goud */
+        .cc-app .cc-panel .cc-table td.cc-c-vol     { color: #48c9d6; }   /* volume — cyaan */
+        .cc-app .cc-panel .cc-table td.cc-c-pilot   { color: #a99cf0; }   /* piloot — lavendel */
+        .cc-app .cc-panel .cc-table td.cc-c-pilot .cc-demo { color: var(--cc-gold); }
 
         /* DEMO-label */
         .cc-app .cc-demo { display: inline-block; font-size: .55rem; font-weight: 800;
