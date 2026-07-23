@@ -16,6 +16,32 @@ class General(models.Model):
         )
 
 
+class Instellingen(models.Model):
+    """Losse plugin-instellingen (één rij — singleton), te beheren in de admin."""
+
+    demo_modus = models.BooleanField(
+        default=False,
+        help_text=_("Toon voorbeeld-ritten (met DEMO-label) om de weergave te bekijken."),
+    )
+
+    class Meta:
+        default_permissions = ()
+        verbose_name = _("Corp Hauling instelling")
+        verbose_name_plural = _("Corp Hauling instellingen")
+
+    def __str__(self) -> str:
+        return "Corp Hauling instellingen"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1                      # dwing één rij af → singleton
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get(cls):
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
+
+
 class Haul(models.Model):
     """Een afgeleverde (of gefaalde) koeriers-rit, bewaard voor de historie.
 

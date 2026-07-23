@@ -79,24 +79,61 @@
         </div>
         {% endif %}
 
-        {% if hauls %}
+        {# Onderweg — lopende ritten #}
+        {% if onderweg %}
+        <div class="cc-panel mb-3">
+            <div class="cc-panel-head">
+                {% translate "ONDERWEG" %} — {{ onderweg|length }} {% translate "CONTRACTEN" %}
+                ({{ onderweg_totaal_fmt }} {% translate "ISK te verdienen" %})
+            </div>
+            <table class="table cc-table align-middle mb-0">
+                <tbody>
+                    {% for h in onderweg %}
+                        <tr>
+                            <td>
+                                <div class="cc-route">
+                                    <span class="cc-sys">{{ h.start }}</span>
+                                    <span class="cc-arrow">→</span>
+                                    <span class="cc-sys">{{ h.eind }}</span>
+                                </div>
+                            </td>
+                            <td class="cc-dim small">{{ h.volume_fmt }} m³</td>
+                            <td class="cc-dim small">
+                                {{ h.piloot }}{% if h.is_demo %} <span class="cc-demo">DEMO</span>{% endif %}
+                            </td>
+                            <td class="cc-dim small" title="{% translate 'Geaccepteerd op' %}">
+                                {% if h.date_accepted %}✔ {{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}
+                            </td>
+                            <td class="text-end cc-green fw-bold">+{{ h.beloning_fmt }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {# Voltooide hauls #}
+        <div class="cc-panel">
+            <div class="cc-panel-head">{% translate "VOLTOOIDE HAULS" %} — {{ voltooid|length }}</div>
             <div class="table-responsive">
-                <table class="table cc-table align-middle">
+                <table class="table cc-table align-middle mb-0">
                     <thead>
                         <tr>
-                            <th>{% translate "Route" %}</th>
-                            <th>{% translate "Piloot" %}</th>
-                            <th class="text-end">{% translate "Beloning" %}</th>
-                            <th class="text-end">{% translate "Volume" %}</th>
-                            <th>{% translate "Status" %}</th>
                             <th>{% translate "Geaccepteerd" %}</th>
                             <th>{% translate "Opgeleverd" %}</th>
-                            <th class="text-end">{% translate "Duur" %}</th>
+                            <th>{% translate "Duur" %}</th>
+                            <th>{% translate "Route" %}</th>
+                            <th>{% translate "Volume" %}</th>
+                            <th>{% translate "Character" %}</th>
+                            <th class="text-end">{% translate "Beloning" %}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for h in hauls %}
+                        {% for h in voltooid %}
                             <tr class="{% if h.is_gefaald %}cc-loss{% endif %}">
+                                <td class="cc-dim small">{% if h.date_accepted %}{{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}</td>
+                                <td class="cc-dim small">{% if h.date_completed %}{{ h.date_completed|date:"j M H:i" }}{% else %}—{% endif %}</td>
+                                <td class="small" title="{% translate 'Tijd tussen accepteren en opleveren' %}">{{ h.duur_fmt }}</td>
                                 <td>
                                     <div class="cc-route">
                                         <span class="cc-sys">{{ h.start }}</span>
@@ -105,35 +142,23 @@
                                     </div>
                                     {% if h.titel %}<div class="cc-dim small">{{ h.titel }}</div>{% endif %}
                                 </td>
-                                <td class="cc-dim small">{{ h.piloot }}</td>
-                                <td class="text-end cc-gold">{{ h.beloning_fmt }}</td>
-                                <td class="text-end">
-                                    {{ h.volume_fmt }} m³
-                                    <div class="cc-dim small">{{ h.per_m3_fmt }}/m³</div>
-                                </td>
-                                <td>
-                                    {% if h.is_klaar %}<span class="cc-badge cc-badge-ok">{% translate "klaar" %}</span>
-                                    {% elif h.is_bezig %}<span class="cc-badge cc-badge-amber">{% translate "onderweg" %}</span>
-                                    {% elif h.is_gefaald %}<span class="cc-badge cc-badge-red">{% translate "gefaald" %}</span>
-                                    {% else %}<span class="cc-dim small">{{ h.status }}</span>{% endif %}
-                                </td>
+                                <td class="cc-dim small">{{ h.volume_fmt }} m³</td>
                                 <td class="cc-dim small">
-                                    {% if h.date_accepted %}✔ {{ h.date_accepted|date:"j M H:i" }}{% else %}—{% endif %}
+                                    {{ h.piloot }}{% if h.is_demo %} <span class="cc-demo">DEMO</span>{% endif %}
                                 </td>
-                                <td class="cc-dim small">
-                                    {% if h.date_completed %}{{ h.date_completed|date:"j M H:i" }}{% else %}—{% endif %}
+                                <td class="text-end fw-bold {% if h.is_gefaald %}cc-red{% else %}cc-green{% endif %}">
+                                    {% if h.is_gefaald %}{% translate "gefaald" %}{% else %}+{{ h.beloning_fmt }}{% endif %}
                                 </td>
-                                <td class="text-end" title="{% translate 'Tijd tussen accepteren en opleveren' %}">{{ h.duur_fmt }}</td>
                             </tr>
+                        {% empty %}
+                            <tr><td colspan="7" class="text-center cc-dim py-4">
+                                {% translate "Nog geen afgeleverde koeriers-ritten deze maand." %}
+                            </td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        {% else %}
-            <div class="alert alert-info">
-                {% translate "Nog geen afgeleverde koeriers-ritten gevonden op je characters." %}
-            </div>
-        {% endif %}
+        </div>
     {% endif %}
 
     <style>
@@ -173,5 +198,18 @@
         .cc-app .cc-bar-val { font-size: .58rem; color: var(--cc-dim); margin-bottom: .2rem; white-space: nowrap; }
         .cc-app .cc-bar-day { font-size: .58rem; color: var(--cc-dim); margin-top: .3rem; white-space: nowrap; }
         .cc-app .cc-badge-ok { color: var(--cc-green); background: rgba(62,207,110,.14); border: 1px solid rgba(62,207,110,.4); }
+
+        /* Secties Onderweg / Voltooide — zelfde look als op het dashboard */
+        .cc-app .cc-panel { background: var(--cc-surface); border: 1px solid var(--cc-border);
+            border-radius: 8px; overflow: hidden; }
+        .cc-app .cc-panel-head { padding: .7rem .9rem .45rem; border-bottom: 1px solid var(--cc-border);
+            font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+            color: var(--cc-dim); }
+        .cc-app .cc-panel .cc-table { margin-bottom: 0; }
+
+        /* DEMO-label */
+        .cc-app .cc-demo { display: inline-block; font-size: .55rem; font-weight: 800;
+            letter-spacing: .05em; color: var(--cc-gold); border: 1px solid var(--cc-gold);
+            border-radius: 3px; padding: 0 .28rem; vertical-align: middle; }
     </style>
 {% endblock %}

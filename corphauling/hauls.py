@@ -6,7 +6,7 @@ tegenhanger van het open-contractenbord: niet 'wat kan ik pakken' maar
 'wat heb ik verdiend'.
 """
 
-from datetime import datetime, timezone as dt_tz
+from datetime import datetime, timedelta, timezone as dt_tz
 
 from .esi import character_contracts, location_info
 
@@ -40,6 +40,40 @@ def fmt_dur(start, end):
     if h:
         return f"{h}u {m % 60}m"
     return f"{m}m"
+
+
+def demo_hauls():
+    """Voorbeeld-ritten (DEMO-label) om de weergave te bekijken zonder eigen data.
+
+    Wordt alleen gebruikt als de demo-schakelaar in de admin aan staat; deze ritten
+    worden nooit opgeslagen.
+    """
+    nu = datetime.now(dt_tz.utc)
+    acc_klaar = nu - timedelta(hours=2, minutes=48)
+
+    def rit(**kw):
+        basis = {
+            "is_demo": True, "collateral": 0.0, "titel": "", "per_m3_fmt": "—",
+            "piloot": "Demo Piloot", "character_id": 0,
+            "is_bezig": False, "is_klaar": False, "is_gefaald": False,
+            "date_completed": None, "date_accepted": None, "duur_fmt": "—",
+        }
+        basis.update(kw)
+        basis["beloning_fmt"] = fmt_isk(basis["beloning"])
+        basis["volume_fmt"] = f"{basis['volume']:,.0f}".replace(",", ".")
+        return basis
+
+    return [
+        rit(id=-1, status="in_progress", is_bezig=True,
+            beloning=30_000_000.0, volume=9_000.0,
+            start="Amarr VIII", eind="Dodixie IX",
+            date_accepted=nu - timedelta(hours=1)),
+        rit(id=-2, status="finished", is_klaar=True,
+            beloning=45_000_000.0, volume=15_000.0,
+            start="Jita IV", eind="Amarr VIII",
+            date_accepted=acc_klaar, date_completed=nu,
+            duur_fmt=fmt_dur(acc_klaar, nu)),
+    ]
 
 
 def _characters(user):
